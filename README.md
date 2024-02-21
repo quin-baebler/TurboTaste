@@ -26,3 +26,5 @@ You will see a list of options.
 For iOS amulator, press `i`.
 
 ## Our Team
+
+- Sam You: Full-Stack Developer
