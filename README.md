@@ -26,3 +26,4 @@ You will see a list of options.
 For iOS amulator, press `i`.
 
 ## Our Team
+- Aryan Shah : Product Manager, UI/UX Designer
