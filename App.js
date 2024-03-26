@@ -1,19 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SuzzalloFoodLockerScreen from './components/SuzzalloFoodLockerScreen'; // Import your new screen
+import McDonaldsDetailScreen from './components/McDonaldsDetailScreen';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>TurboTaste</Text>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={SuzzalloFoodLockerScreen} options={{ title: 'Suzzallo Food Locker' }} />
+        <Stack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{ title: 'McDonald’s' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
