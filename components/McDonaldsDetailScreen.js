@@ -12,7 +12,7 @@ const featuredItems = [
     { id: '3', image: require('../assets/item3.jpg'), title: 'McChicken' },
   ];
 
-const McDonaldsDetailScreen = () => {
+  const McDonaldsDetailScreen = (props) => {
     const renderFeaturedItem = ({ item }) => (
         <View style={styles.featuredItemContainer}>
           <Image source={item.image} style={styles.featuredItem} />
@@ -39,7 +39,6 @@ const McDonaldsDetailScreen = () => {
           </View>
           <Text style={styles.subtitle}>Burgers • 1.2 mi</Text>
           <View style={styles.infoBoxContainer}>
-            {/* Box for Suzzallo Food Locker and time info */}
             <View style={styles.infoBox}>
               <Text style={styles.infoBoxText}>Suzzallo Food Locker</Text>
               <Text style={styles.infoBoxTextSmall}>How it works</Text>
@@ -58,7 +57,10 @@ const McDonaldsDetailScreen = () => {
             keyExtractor={item => item.id}
             style={styles.carousel}
           />
-          <TouchableOpacity style={styles.viewCartButton}>
+          <TouchableOpacity
+        style={styles.viewCartButton}
+        onPress={() => props.navigation.navigate('Cart')}
+      >
             <Text style={styles.viewCartText}>VIEW CART</Text>
           </TouchableOpacity>
         </View>
@@ -200,8 +202,6 @@ const styles = StyleSheet.create({
   featuredItemTitle: {
     marginTop: 5,
     width: 100, // Fixed width
-    overflow: 'hidden', // Hide overflow
-    textOverflow: 'ellipsis', // Add ellipsis at the end
   },
   bottomNavigationBar: {
     flexDirection: 'row',
@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
   },
   navText: {
     fontSize: 10, // Smaller font size for the text
-    align: 'center',
     color: 'gray',
   },
   plusIcon: {
