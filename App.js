@@ -5,6 +5,8 @@ import SuzzalloFoodLockerScreen from './components/SuzzalloFoodLockerScreen'; //
 import McDonaldsDetailScreen from './components/McDonaldsDetailScreen';
 import CartScreen from './components/CartScreen'; // Import your CartScreen
 import SubmittingOrderScreen from './components/SubmittingOrderScreen';
+import OrdersScreen from './components/OrdersScreen';
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -19,6 +21,11 @@ const App = () => {
           options={{ title: 'Cart' }}
         />
         <Stack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{ title: 'Confirmation' }} />
+        <Stack.Screen
+          name="Orders" // This is the route name you'll use in the navigation.navigate function
+          component={OrdersScreen}
+          options={{ title: 'Orders' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

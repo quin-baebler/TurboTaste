@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const SubmittingOrderScreen = () => {
   const [orderStatus, setOrderStatus] = useState({
@@ -8,7 +9,9 @@ const SubmittingOrderScreen = () => {
     text: 'Submitting Order ...',
     icon: 'circle-o-notch',
   });
-  
+
+  const navigation = useNavigation();
+
   const renderOrderStatus = () => {
     return (
       <View style={styles.orderStatusContainer}>
@@ -64,9 +67,12 @@ const SubmittingOrderScreen = () => {
           <Text style={styles.orderDetail}>3x Chicken Sandwich</Text>
           <Text style={styles.orderDetail}>4x Filet-O-Fish...</Text>
         </View>
-        <TouchableOpacity style={styles.viewOrderButton}>
-          <Text style={styles.viewOrderButtonText}>View Order</Text>
-        </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.viewOrderButton}
+        onPress={() => navigation.navigate('Orders')}
+      >
+        <Text style={styles.viewOrderButtonText}>View Order</Text>
+      </TouchableOpacity>
       </View>
 
       {/* Cancel Button */}

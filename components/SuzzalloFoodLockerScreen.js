@@ -1,4 +1,3 @@
-import React from 'react';
 import { StatusBar, TouchableOpacity, View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
