@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView, Switch } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons'; // make sure to import AntDesign for the arrow icon
 
 const CartScreen = () => {
   const [cartItems, setCartItems] = useState([
     { id: '1', name: 'Big Mac', price: 17.0, quantity: 6, image: require('../assets/big_mac.jpg') },
-    { id: '2', name: 'Filet-O-Fish', price: 17.0, quantity: 4, image: require('../assets/filet_o_fish.jpg') },
+    { id: '2', name: 'Filet-O-Fish', price: 17.0, quantity: 4, image: require('../assets/fof.png') },
     { id: '3', name: 'Chicken Sandwich', price: 10.0, quantity: 3, image: require('../assets/chicken_sandwich.jpg') },
   ]);
 
@@ -34,27 +35,31 @@ const CartScreen = () => {
     <View style={styles.cartItem}>
       <Image source={item.image} style={styles.itemImage} />
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <View style={styles.itemRightSide}>
-          <View style={styles.quantityContainer}>
-            <TouchableOpacity 
-              style={[styles.roundButton, item.quantity === 1 && styles.roundButtonDisabled]} 
-              onPress={() => updateQuantity(item.id, -1)} 
-              disabled={item.quantity === 1}
-            >
-              <FontAwesome name="minus" size={16} color="#333" />
-            </TouchableOpacity>
-            <Text style={styles.quantity}>{item.quantity}</Text>
-            <TouchableOpacity style={styles.roundButton} onPress={() => updateQuantity(item.id, 1)}>
-              <FontAwesome name="plus" size={16} color="#333" />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.price}>${(item.price * item.quantity).toFixed(2)}</Text>
+        <View style={styles.itemTextContainer}>
+          <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+        </View>
+        <View style={styles.itemQuantity}>
+          <TouchableOpacity
+            style={[styles.roundButton, item.quantity === 1 && styles.roundButtonDisabled]}
+            onPress={() => updateQuantity(item.id, -1)}
+            disabled={item.quantity === 1}
+          >
+            <FontAwesome name="minus" size={16} color="#333" />
+          </TouchableOpacity>
+          <Text style={styles.quantityText}>{item.quantity}</Text>
+          <TouchableOpacity
+            style={styles.roundButton}
+            onPress={() => updateQuantity(item.id, 1)}
+          >
+            <FontAwesome name="plus" size={16} color="#333" />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
   );
-
+  
+  
 
   const renderAdditionalItem = ({ item }) => (
     <View style={styles.featuredItemContainer}>
@@ -82,12 +87,12 @@ const CartScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <FontAwesome name="angle-left" size={24} color="black" />
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>McDonald's</Text>
-        </View>
-        <FontAwesome name="user-plus" size={24} color="black" />
+        <FontAwesome name="angle-left" size={24} color="black" style={{ flex: 1 }} />
+        <Text style={styles.headerTitle} numberOfLines={1} >Mass Delivery</Text>
+        <FontAwesome name="user-plus" size={24} color="black" style={{ flex: 1, textAlign: 'right' }} />
       </View>
+      
+      <Text style={styles.restaurantTitle}>McDonald's</Text>
       
       <FlatList
         data={cartItems}
@@ -154,15 +159,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f2f2f2',
-    paddingVertical: 12,
+    paddingTop: 25, // Add padding at the top to lower the header
+    paddingBottom: 5,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    backgroundColor: '#f2f2f2',
+    height: 60, // Provide a fixed height to the header
+    alignItems: 'center', // Center items vertically
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 0, // Adjust this so that it doesn't stretch and allow for the arrow icon
+  },
+  itemQuantity: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 15,
+    padding: 2,
+    marginLeft: 150,
+    marginTop: 20,
+    width: 100, // You can adjust this width as needed
+    position: 'absolute', 
   },
   cartItem: {
     flexDirection: 'row',
@@ -172,6 +194,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+  itemTextContainer: {
+    flexDirection: 'column', // Stack the name and price on top of each other
+  },
+  restaurantTitle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginVertical: 5, // Add some vertical space above and below the restaurant title
+    marginLeft: 5,
+  },
   itemImage: {
     width: 80,
     height: 80,
@@ -180,11 +211,12 @@ const styles = StyleSheet.create({
   itemDetails: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    marginLeft: 10, // Add some space between image and details
   },
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 4, // Space between name and price
   },
   itemRightSide: {
     alignItems: 'flex-end',
@@ -195,12 +227,17 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   roundButton: {
-    width: 30,
-    height: 30,
+    width: 24,
+    height: 24,
     borderRadius: 15,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  quantityText: {
+    marginHorizontal: 15, // Space around the quantity number
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   roundButtonDisabled: {
     backgroundColor: '#e6e6e6',
@@ -210,8 +247,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   price: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
+  },
+  quantityDisplay: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 8, // Provide some horizontal margin
   },
   addMoreItemsContainer: {
     paddingVertical: 10,
@@ -223,6 +265,7 @@ const styles = StyleSheet.create({
   addMoreItemsText: {
     color: '#000',
     fontWeight: 'bold',
+    
   },
   additionalItemsHeader: {
     fontSize: 16,
@@ -358,7 +401,7 @@ const styles = StyleSheet.create({
   },
   addIconContainer: {
     position: 'absolute',
-    bottom: 5,
+    bottom: 15,
     right: 5,
   },
   headerTitleContainer: {

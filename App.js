@@ -13,18 +13,18 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={SuzzalloFoodLockerScreen} options={{ title: 'Suzzallo Food Locker' }} />
-        <Stack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{ title: 'McDonald’s' }} />
+        <Stack.Screen name="Home" component={SuzzalloFoodLockerScreen} options={{headerShown: false}} />
+        <Stack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{headerShown: false}} />
         <Stack.Screen
           name="Cart"
           component={CartScreen}
-          options={{ title: 'Cart' }}
+          options={{headerShown: false}}
         />
-        <Stack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{ title: 'Confirmation' }} />
+        <Stack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{headerShown: false}} />
         <Stack.Screen
           name="Orders" // This is the route name you'll use in the navigation.navigate function
           component={OrdersScreen}
-          options={{ title: 'Orders' }}
+          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>

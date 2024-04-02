@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, FlatList, Dimensions} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { CurrentRenderContext } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
 
 const featuredItems = [
     { id: '1', image: require('../assets/item1.jpg'), title: '2 Cheese Burger and Drink Combo' },
@@ -13,6 +14,18 @@ const featuredItems = [
   ];
 
   const McDonaldsDetailScreen = (props) => {
+    const [showCartButton, setShowCartButton] = useState(false);
+    const [cartItems, setCartItems] = useState(0);
+    const addToCart = () => {
+      setCartItems(cartItems + 1);
+    };
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowCartButton(true);
+      }, 2000); // Show the cart button after 2 seconds
+  
+      return () => clearTimeout(timer);
+    }, []);
     const renderFeaturedItem = ({ item }) => (
         <View style={styles.featuredItemContainer}>
           <Image source={item.image} style={styles.featuredItem} />
@@ -27,7 +40,7 @@ const featuredItems = [
     <View style={styles.container}>
       <ScrollView>
         <Image
-          source={require('../assets/mcdonalds_detail.png')} // Make sure this is the correct path
+          source={require('../assets/mcdonalds.png')} // Make sure this is the correct path
           style={styles.fullWidthImage}
         />
         <View style={styles.content}>
@@ -40,7 +53,7 @@ const featuredItems = [
           <Text style={styles.subtitle}>Burgers • 1.2 mi</Text>
           <View style={styles.infoBoxContainer}>
             <View style={styles.infoBox}>
-              <Text style={styles.infoBoxText}>Suzzallo Food Locker</Text>
+              <Text style={styles.infoBoxText} numberOfLines={1}>Suzzallo Locker</Text>
               <Text style={styles.infoBoxTextSmall}>How it works</Text>
             </View>
             <View style={styles.infoBox}>
@@ -57,17 +70,21 @@ const featuredItems = [
             keyExtractor={item => item.id}
             style={styles.carousel}
           />
+          {
+        showCartButton && (
           <TouchableOpacity
-        style={styles.viewCartButton}
-        onPress={() => props.navigation.navigate('Cart')}
-      >
+            style={styles.viewCartButton}
+            onPress={() => props.navigation.navigate('Cart')}
+          >
             <Text style={styles.viewCartText}>VIEW CART</Text>
           </TouchableOpacity>
+        )
+      }
         </View>
       </ScrollView>
       <View style={styles.bottomNavigationBar}>
       <View style={styles.navItem}>
-          <FontAwesome name="home" size={24} color="gray" />
+          <FontAwesome name="home" size={24} color="red" />
           <Text style={styles.navText}>Home</Text>
         </View>
         <View style={styles.navItem}>
@@ -114,8 +131,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rating: {
-    fontSize: 20,
-    color: 'green',
+    fontSize: 18,
+    color: 'black',
   },
   reviews: {
     fontSize: 18,
@@ -144,6 +161,9 @@ const styles = StyleSheet.create({
   infoBoxText: {
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center', // Center the text in the container
+    paddingVertical: 10,
+    backgroundColor: 'transparent',
   },
   infoBoxTextSmall: {
     fontSize: 14,
@@ -165,7 +185,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 10,
   },
   viewCartText: {
     fontSize: 18,
@@ -187,7 +207,7 @@ const styles = StyleSheet.create({
   },
   fullWidthImage: {
     width: windowWidth,
-    height: windowHeight * 0.3, // 30% of the screen height
+    height: windowHeight * 0.4, // 30% of the screen height
     resizeMode: 'cover',
   },
   scrollContent: {
@@ -204,16 +224,15 @@ const styles = StyleSheet.create({
     width: 100, // Fixed width
   },
   bottomNavigationBar: {
+    position: 'absolute',
+    bottom: 0,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    backgroundColor: '#fff',
+    width: '100%',
     borderTopWidth: 1,
     borderTopColor: '#ddd',
+    backgroundColor: '#fff',
+    justifyContent: 'space-around',
     paddingVertical: 10,
-    position: 'absolute', // Make navigation bar stick to the bottom
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   navItem: {
     alignItems: 'center', // Center the icons and text
