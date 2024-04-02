@@ -66,7 +66,7 @@ const CartScreen = () => {
       <Image source={item.image} style={styles.featuredItem} />
       <Text style={styles.featuredItemTitle}>{item.name}</Text>
       <TouchableOpacity style={styles.addIconContainer}>
-        <FontAwesome name="plus-circle" size={24} color="red" />
+        <FontAwesome name="plus-circle" size={22} color="red" />
       </TouchableOpacity>
     </View>
   );
@@ -159,13 +159,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 25, // Add padding at the top to lower the header
+    paddingTop: 30, // Add padding at the top to lower the header
     paddingBottom: 5,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
     backgroundColor: '#f2f2f2',
-    height: 60, // Provide a fixed height to the header
+    height: 100, // Provide a fixed height to the header
     alignItems: 'center', // Center items vertically
   },
   headerTitle: {
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginVertical: 5, // Add some vertical space above and below the restaurant title
     marginLeft: 5,
+    marginTop: 10,
   },
   itemImage: {
     width: 80,
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   summaryContainer: {
-    padding: 16,
+    padding: 10,
   },
   summaryTitle: {
     fontSize: 18,
@@ -332,8 +333,9 @@ const styles = StyleSheet.create({
   savingsContainer: {
     backgroundColor: '#e8f5e9',
     borderRadius: 5,
-    padding: 15,
+    padding: 20,
     margin: 25,
+    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -350,6 +352,7 @@ const styles = StyleSheet.create({
     marginBottom: 25, 
     width: '90%',
     alignSelf: 'center',
+    marginBottom: 40,
   },
   continueButtonText: {
     color: '#fff',
@@ -402,7 +405,7 @@ const styles = StyleSheet.create({
   addIconContainer: {
     position: 'absolute',
     bottom: 15,
-    right: 5,
+    right: 3,
   },
   headerTitleContainer: {
     backgroundColor: '#e6e6e6',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -37,25 +37,14 @@ const SubmittingOrderScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      {/* Saved Container */}
+    <ScrollView style={styles.container}>
       <View style={[styles.savedContainer, orderStatus.submitting ? styles.submittingBackground : styles.submittedBackground]}>
         <Text style={styles.savedAmount}>$8.10</Text>
         <Text style={styles.savedText}>SAVED</Text>
       </View>
-
-      {/* Order Details */}
+  
       <View style={styles.detailsContainer}>
-        {/* Order Status Indicator */}
-        <View style={styles.orderStatusContainer}>
-          {orderStatus.submitting ? (
-            <ActivityIndicator size="small" color="black" />
-          ) : (
-            <FontAwesome name={orderStatus.icon} size={20} color="black" />
-          )}
-          <Text style={styles.orderStatusText}>{orderStatus.text}</Text>
-        </View>
-        {/* Address and Order Information */}
+        {renderOrderStatus()}
         <View style={styles.addressContainer}>
           <Text style={styles.addressTitle}>Address</Text>
           <Text style={styles.address}>4000 15th Ave NE, Seattle, WA 98195</Text>
@@ -67,19 +56,21 @@ const SubmittingOrderScreen = () => {
           <Text style={styles.orderDetail}>3x Chicken Sandwich</Text>
           <Text style={styles.orderDetail}>4x Filet-O-Fish...</Text>
         </View>
-        <TouchableOpacity
-        style={styles.viewOrderButton}
-        onPress={() => navigation.navigate('Orders')}
-      >
-        <Text style={styles.viewOrderButtonText}>View Order</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.viewOrderButton} onPress={() => navigation.navigate('Orders')}>
+          <Text style={styles.viewOrderButtonText}>View Order</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Cancel Button */}
-      <TouchableOpacity style={styles.cancelButton}>
-        <Text style={styles.cancelButtonText}>Cancel Order</Text>
-      </TouchableOpacity>
-    </View>
+      <TouchableOpacity
+      style={styles.cancelButton}
+      onPress={() => {
+      }}
+    >
+      <Text style={styles.cancelButtonText}>Cancel Order</Text>
+    </TouchableOpacity>
+    <View style={{ height: 20 }} />
+  </ScrollView>
   );
 };
 
@@ -92,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 70,
   },
   savedAmount: {
     fontSize: 54,
@@ -133,7 +124,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     backgroundColor: 'white',
-    margin: 10,
+    margin: 20,
     padding: 20,
     borderRadius: 8,
     shadowColor: '#000',
@@ -193,7 +184,8 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '90%',
     alignSelf: 'center',
-    marginBottom: 10,
+    marginTop: 40, // Adjust top margin as needed
+    marginBottom: 40, // Reduce bottom margin to move button up
   },
   cancelButtonText: {
     textAlign: 'center',
