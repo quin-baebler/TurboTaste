@@ -6,13 +6,16 @@ import McDonaldsDetailScreen from './components/McDonaldsDetailScreen';
 import CartScreen from './components/CartScreen'; // Import your CartScreen
 import SubmittingOrderScreen from './components/SubmittingOrderScreen';
 import OrdersScreen from './components/OrdersScreen';
+import LoginScreen from './components/LoginScreen';
+
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="Home" component={SuzzalloFoodLockerScreen} options={{headerShown: false}} />
         <Stack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{headerShown: false}} />
         <Stack.Screen
