@@ -22,7 +22,7 @@ const featuredItems = [
     useEffect(() => {
       const timer = setTimeout(() => {
         setShowCartButton(true);
-      }, 2000); // Show the cart button after 2 seconds
+      }, 1000); // Show the cart button after 2 seconds
   
       return () => clearTimeout(timer);
     }, []);
