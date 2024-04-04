@@ -8,7 +8,6 @@ import SubmittingOrderScreen from './components/SubmittingOrderScreen';
 import OrdersScreen from './components/OrdersScreen';
 import LoginScreen from './components/LoginScreen';
 
-
 const Stack = createNativeStackNavigator();
 
 const App = () => {
