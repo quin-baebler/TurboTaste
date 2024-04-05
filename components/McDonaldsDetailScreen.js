@@ -8,9 +8,9 @@ const windowHeight = Dimensions.get('window').height;
 
 
 const featuredItems = [
-    { id: '1', image: require('../assets/item1.jpg'), title: '2 Cheese Burger and Drink Combo' },
+    { id: '1', image: require('../assets/item1.jpg'), title: 'Burger, Fries and Drink Combo' },
     { id: '2', image: require('../assets/item2.jpg'), title: '10 piece McNuggets' },
-    { id: '3', image: require('../assets/item3.jpg'), title: 'McChicken' },
+    { id: '3', image: require('../assets/item3.jpg'), title: 'McChicken Burger' },
   ];
 
   const McDonaldsDetailScreen = (props) => {
@@ -22,13 +22,13 @@ const featuredItems = [
     useEffect(() => {
       const timer = setTimeout(() => {
         setShowCartButton(true);
-      }, 2000); // Show the cart button after 2 seconds
+      }, 1000); // Show the cart button after 2 seconds
   
       return () => clearTimeout(timer);
     }, []);
     const renderFeaturedItem = ({ item }) => (
         <View style={styles.featuredItemContainer}>
-          <Image source={item.image} style={styles.featuredItem} />
+          <Image source={item.image} style={styles.featuredItem}  />
           <Text style={styles.featuredItemTitle} numberOfLines={3} ellipsizeMode="tail">
             {item.title}
           </Text>
@@ -110,7 +110,7 @@ const featuredItems = [
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.98,
     backgroundColor: 'white',
   },
   headerImage: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginTop: 8,
   },
   featuredItem: {
     width: 130,
@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 10,
+    marginTop: 28,
   },
   viewCartText: {
     fontSize: 18,
@@ -200,10 +201,11 @@ const styles = StyleSheet.create({
   featuredItemContainer: {
     alignItems: 'center',
     marginRight: 10,
+    marginTop: 20,
     position: 'relative', // Needed for absolute positioning of the plus icon
   },
   featuredItemTitle: {
-    marginTop: 5,
+    marginTop: 10,
   },
   fullWidthImage: {
     width: windowWidth,
@@ -222,17 +224,19 @@ const styles = StyleSheet.create({
   featuredItemTitle: {
     marginTop: 5,
     width: 100, // Fixed width
+    fontSize: 16,
+
   },
   bottomNavigationBar: {
     position: 'absolute',
-    bottom: 0,
+    marginTop: 856,
     flexDirection: 'row',
     width: '100%',
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     backgroundColor: '#fff',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   navItem: {
     alignItems: 'center', // Center the icons and text
