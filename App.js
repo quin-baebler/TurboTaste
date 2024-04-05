@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Orders">
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="Home" component={SuzzalloFoodLockerScreen} options={{headerShown: false}} />
         <Stack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{headerShown: false}} />

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { FontAwesome } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const OrdersScreen = ({ navigation }) => {
   const [orderStatus, setOrderStatus] = useState('Heading to Suzzallo Hub');
@@ -15,6 +16,7 @@ const OrdersScreen = ({ navigation }) => {
     const timer = setTimeout(() => {
       setOrderStatus('Arrived at Suzzallo Hub');
       setProgress(1); // Set progress to 1 indicating completion
+      setOrderProgress('completed');
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
@@ -45,8 +47,9 @@ const OrdersScreen = ({ navigation }) => {
       zIndex: 1,
     },
     icon: {
-      marginHorizontal: '8%',
+      marginHorizontal: '8%', // Spacing between the circles
     },
+
   });
 
   // Dummy data for completed orders
@@ -123,10 +126,10 @@ const OrdersScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <Text style={styles.header}>Orders</Text>
-        
+        <View style={styles.shadowBox}>
         {/* Active Order */}
         <MapView
           style={styles.map}
@@ -139,7 +142,7 @@ const OrdersScreen = ({ navigation }) => {
         <View style={styles.activeOrderContainer}>
           <Text style={styles.restaurantName}>McDonald's</Text>
           <Text style={styles.orderStatus}>
-            {orderProgress === 'inProgress' ? 'Heading to Suzzallo Hub' : 'Arrived at Suzzallo Hub'}
+            {orderStatus}
           </Text>
           <Text style={styles.orderEta}>
             {orderProgress === 'inProgress' ? 'Arrives in 35 - 45 min' : 'Your order has arrived!'}
@@ -154,14 +157,13 @@ const OrdersScreen = ({ navigation }) => {
         <FontAwesome name="car" size={24} color="black" style={progressBarStyles.icon} />
         <FontAwesome name="lock" size={24} color="black" style={progressBarStyles.icon} />
       </View>
-      <Text style={styles.orderStatus}>{orderStatus}</Text>
-      <Text style={styles.orderEta}>{orderStatus === 'Heading to Suzzallo Hub' ? 'Arrives in 35 - 45 min' : 'Your order has arrived!'}</Text>
+
 
       <TouchableOpacity style={styles.orderDetailsButton} onPress={handleViewOrderDetails}>
-        <Text style={styles.orderDetailsButtonText}>Order Details</Text>
+        <Text style={styles.orderDetailsButtonText} numberOfLines={1}>Order Details</Text>
       </TouchableOpacity>
         </View>
-
+      </View>
         {/* Completed Orders */}
         <Text style={styles.completedOrdersHeader}>Completed</Text>
         {completedOrders.map(renderCompletedOrder)}
@@ -191,7 +193,7 @@ const OrdersScreen = ({ navigation }) => {
           <Text style={styles.navText}>Orders</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -199,12 +201,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingHorizontal: 15,
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     padding: 16,
   },
@@ -213,6 +216,7 @@ const styles = StyleSheet.create({
   },
   map: {
     height: 150,
+    borderRadius: 8,
   },
   orderDetails: {
     padding: 16,
@@ -230,7 +234,9 @@ const styles = StyleSheet.create({
   },
   orderStatus: {
     fontSize: 16,
-    color: 'green',
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 24,
     marginVertical: 4,
   },
   orderEta: {
@@ -238,19 +244,22 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   orderDetailsButton: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: 'red',
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: 200,
+    width: 115,
+    alignSelf: 'flex-end',
+    marginRight: 13,
   },
   orderDetailsButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: 'white', // Updated text color
   },
   completedOrdersHeader: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     padding: 16,
   },
@@ -264,6 +273,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eeeeee', // Light grey color for the separator line
   },
+  
   orderActionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -274,6 +284,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 4,
     backgroundColor: '#f0f0f0', // Light grey background for buttons
+    borderRadius: 200,
   },
   actionButtonText: {
     fontSize: 14,
@@ -330,18 +341,33 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
   },
+  restaurantName: {
+    paddingBottom: 8,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  orderDate: {
+    color: '#757575',
+    paddingBottom: 8,
+  },
+  orderDetails: {
+    paddingLeft: 1,
+    paddingBottom: 8,
+  },
   reorderButton: {
     backgroundColor: '#e0e0e0',
-    padding: 10,
+    padding: 8,
     marginRight: 8,
   },
   viewReceiptButton: {
     backgroundColor: '#e0e0e0',
-    padding: 10,
+    padding: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
     marginTop: 8,
+    gap: 8,
+    justifyContent: 'flex-end',
   },
   reorderButtonText: {
     textAlign: 'center',
@@ -368,6 +394,24 @@ const styles = StyleSheet.create({
   navText: {
     fontSize: 10,
     color: 'gray',
+  },
+  activeOrderContainer: {
+    paddingTop: 10,
+  },
+  shadowBox: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    paddingTop: 0,
+    marginBottom: 16,
   },
 });
 

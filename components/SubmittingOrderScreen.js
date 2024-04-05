@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 70,
+    padding: 80,
   },
   savedAmount: {
     fontSize: 54,
