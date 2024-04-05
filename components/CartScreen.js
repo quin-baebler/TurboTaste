@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 30, // Add padding at the top to lower the header
+    paddingTop: 45, // Add padding at the top to lower the header
     paddingBottom: 5,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 15,
     padding: 2,
-    marginLeft: 150,
+    marginLeft: 215,
     marginTop: 20,
     width: 100, // You can adjust this width as needed
     position: 'absolute', 
@@ -199,9 +199,9 @@ const styles = StyleSheet.create({
   },
   restaurantTitle: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 20,
     marginVertical: 5, // Add some vertical space above and below the restaurant title
-    marginLeft: 5,
+    marginLeft: 10,
     marginTop: 10,
   },
   itemImage: {
@@ -269,9 +269,10 @@ const styles = StyleSheet.create({
     
   },
   additionalItemsHeader: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     paddingVertical: 10,
+    marginRight: 20,
     paddingHorizontal: 16,
   },
   additionalItemsList: {
@@ -283,8 +284,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   additionalItemImage: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     borderRadius: 30,
   },
   additionalItemName: {
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   summaryTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
   },
@@ -401,11 +402,13 @@ const styles = StyleSheet.create({
   },
   carousel: {
     paddingVertical: 10, // Adjust as needed
+    position: 'relative',
+    marginLeft: 20,
   },
   addIconContainer: {
     position: 'absolute',
     bottom: 15,
-    right: 3,
+    left: 105,
   },
   headerTitleContainer: {
     backgroundColor: '#e6e6e6',
