@@ -1,138 +1,182 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Task from './Task';
-import { Dimensions } from 'react-native';
-import { Image } from 'react-native';
+import React, { useState } from 'react';
+import { FIREBASE_AUTH } from '../firebaseConfig';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, Image, Pressable, Modal, TextInput, Button, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const auth = FIREBASE_AUTH;
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const login = async () => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setModalVisible(false);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const signUp = async () => {
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("Account created!");
+      setModalVisible(false);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.doordashWrapper}>
-      <View style={styles.titleContainer}>
-        <Image source={require('../assets/logo1.png')} style={styles.logo} />
-        <Text style={styles.sectionTitle}>DOORDASH</Text>
+      <View style={styles.logoContainer}>
+        <Image source={require('../assets/logo1.png')} style={styles.logoContainer.image} resizeMode='contain' />
+        <Text style={styles.logoContainer.text}>DOORDASH</Text>
       </View>
-      <View style={styles.discover}>
-        <Text style={styles.discoverText}>Discover more from your{'\n'}neighborhood</Text>
+
+      <Text style={styles.discoverText}>Discover more from your{'\n'}neighborhood</
+      Text>
+
+      <View style={styles.loginOptionContainer}>
+        <Pressable onPress={() => setModalVisible(true)} style={[styles.loginOptionContainer.button, { backgroundColor: "#EB1700" }]}>
+          <Text style={[styles.loginOptionContainer.button.text, { color: "white" }]}>Continue with Email</Text>
+        </Pressable>
+        <Pressable style={styles.loginOptionContainer.button}>
+          <Text style={styles.loginOptionContainer.button.text}>Continue with Google</Text>
+        </Pressable>
+        <Pressable style={styles.loginOptionContainer.button}>
+          <Text style={styles.loginOptionContainer.button.text}>Continue with Facebook</Text>
+        </Pressable>
+        <Pressable style={styles.loginOptionContainer.button}>
+          <Text style={styles.loginOptionContainer.button.text}>Continue with Apple</Text>
+        </Pressable>
+        <Pressable style={[styles.loginOptionContainer.button, { backgroundColor: 'transparent' }]}>
+          <Text style={styles.loginOptionContainer.button.text}>Continue as Guest</Text>
+        </Pressable>
       </View>
-        <View style={styles.items}>
-          <Task text="Continue with Email" isFirst={true}/>
-          <Task text="Continue with Google"/>
-          <Task text="Continue with Facebook"/>
-          <Task text="Continue with Apple"/>
-        </View>
-        <View style={styles.guest}>
-        <Text style={styles.guestText}>Continue as Guest</Text>
-        <View style={styles.line}/>
-        <Text style={styles.smallText}>
-            By tapping continue with Google, Facebook, or Apple,{'\n'}you agree to DoorDash’s 
-          <Text style={styles.redText}> Terms & Conditions </Text> 
-            and 
-          <Text style={styles.redText}>{'\n'}Privacy Policy</Text>.
+
+      <View style={styles.disclaimer}>
+        <Text style={styles.text}>
+          By tapping continue with Google, Facebook, or Apple, you agree to DoorDash's
+          <Text style={styles.redText}> Terms & Conditions </Text>
+          and
+          <Text style={styles.redText}> Privacy Policy</Text>.
         </Text>
       </View>
-        
 
-      </View>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        presentationStyle="pageSheet"
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.modalContainer}>
+          <TextInput value={email} style={styles.modalContainer.input} placeholder="Email" autoCapitalize="none" onChangeText={(text) => setEmail(text)}></TextInput>
+          <TextInput value={password} style={styles.modalContainer.input} placeholder="password" autoCapitalize="none" onChangeText={(text) => setPassword(text)} secureTextEntry={true}></TextInput>
+
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <>
+              <Pressable onPress={login} style={[styles.loginOptionContainer.button, { backgroundColor: "#EB1700" }]}>
+                <Text style={[styles.loginOptionContainer.button.text, { color: "white" }]}>Login</Text>
+              </Pressable>
+              <Pressable onPress={signUp} style={styles.loginOptionContainer.button}>
+                <Text style={styles.loginOptionContainer.button.text}>Create Account</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+      </Modal >
+
       <StatusBar style="auto" />
-    </View>
+    </View >
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // fill the screen
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  doordashWrapper: {
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#EB1700',
-    textAlign: 'center',
-    letterSpacing: 2,
-  }, 
-  items: {
-    marginTop: 150,
-    top: Dimensions.get('window').height / 10, 
-
-  }, 
-  logo: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
-    marginRight: 10, 
-  },
-  titleContainer: {
+  logoContainer: {
+    display: 'flex',
     flexDirection: 'row',
-    position: 'absolute',
-    top: Dimensions.get('window').height / -10, 
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  
-    
-  },
-  discover: {
-    position: 'absolute',
-    flex: 1,
-    top: Dimensions.get('window').height / 5, 
-    JustifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  
-    
+    margin: 100,
+    image: {
+      width: 50,
+    },
+    text: {
+      marginLeft: 20,
+      fontSize: 30,
+      fontWeight: 'bold',
+      color: '#EB1700',
+      textAlign: 'center',
+      letterSpacing: 2,
+    }
   },
   discoverText: {
+    marginHorizontal: 20,
     fontSize: 32,
     fontWeight: 'bold',
     color: '#000000',
-    textAlign: 'left',
-  
-    
   },
-  guest: {
-    position: 'absolute',
-    flex: 1,
-    top: Dimensions.get('window').height / 1.72, 
-    JustifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  
-    
+  loginOptionContainer: {
+    margin: 20,
+    borderBottomColor: '#E7E7E7',
+    borderBottomWidth: 1,
+    borderStyle: 'solid',
+    button: {
+      backgroundColor: '#F8F8F8',
+      padding: 10,
+      borderRadius: 200,
+      alignItems: 'center',
+      marginVertical: 10,
+      text: {
+        fontSize: 18,
+        fontWeight: 'bold',
+      }
+    }
   },
-  guestText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000000',
-    textAlign: 'center',
-  
-    
+  disclaimer: {
+    marginHorizontal: 20,
   },
-  line: {
-    borderBottomColor: 'E7E7E7',
-    borderBottomWidth: 0.5,
-    width: "90%",
-    top: 10,
-    alignSelf : 'center', 
-  },
-  smallText: {
-    fontSize: 12,
+  text: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#494949',
     textAlign: 'center',
-    top: 15,
-   
   },
   redText: {
     color: '#EB1700',
-   
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    input: {
+      width: '80%',
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      marginBottom: 10,
+    }
   }
-
 });
