@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 54,
     fontWeight: 'bold',
     color: 'darkcyan',
+    marginTop: 50,
   },
   savedText: {
     fontSize: 34,
