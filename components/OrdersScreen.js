@@ -10,7 +10,6 @@ const OrdersScreen = ({ navigation }) => {
   const [progress, setProgress] = useState(0.5); // Progress of the order, 0.5 for half, 1 for completed
   const [orderProgress, setOrderProgress] = useState('inProgress');
   
-  
   useEffect(() => {
     // Mock order status update after 2 seconds
     const timer = setTimeout(() => {
@@ -25,33 +24,44 @@ const OrdersScreen = ({ navigation }) => {
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       marginVertical: 20,
+      paddingHorizontal: '5%', // Ensure there's space for the icons not to be cut off
     },
     line: {
       position: 'absolute',
       top: '50%',
-      left: '10%',
-      right: '10%',
-      height: 2,
-      backgroundColor: '#e0e0e0', // Grey for the uncompleted part
-      zIndex: -1,
+      left: '5%',
+      right: '5%',
+      height: 4, // Thicker line
+      backgroundColor: '#e0e0e0', // Light grey for the incomplete part
+      zIndex: 1,
     },
     completedLine: {
       position: 'absolute',
       top: '50%',
-      left: '10%',
-      width: `${progress * 80}%`, // Assuming the icons are about 10% from each end
-      height: 2,
+      left: '6%',
+      width: `${progress * 92}%`, // Adjust the width as needed
+      height: 4, // Thicker line
       backgroundColor: 'black', // Black for the completed part
-      zIndex: 1,
+      zIndex: 2,
+    },
+    iconContainer: {
+      width: 35, // Size of the circle container
+      height: 35, // Size of the circle container
+      borderRadius: 20, // Half the size to make it circular
+      backgroundColor: 'white', // White background for the circles
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2, // Thickness of the circle border
+      borderColor: 'black', // Color of the border
+      zIndex: 3,
     },
     icon: {
-      marginHorizontal: '8%', // Spacing between the circles
+      color: 'black', // Color of the icons
     },
-
   });
-
+  
   // Dummy data for completed orders
   const completedOrders = [
     {
@@ -86,30 +96,38 @@ const OrdersScreen = ({ navigation }) => {
     },
   };
 
-  const renderCompletedOrder = (order) => (
-    <View key={order.id} style={styles.completedOrderContainer}>
-      <Text style={styles.restaurantName}>{order.restaurant}</Text>
-      <Text style={styles.orderDate}>{order.date} • {order.price} • {order.items}</Text>
-      <Text style={styles.orderDetails}>{order.details}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionButtonText}>Reorder</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionButtonText}>View Receipt</Text>
-        </TouchableOpacity>
+  const renderCompletedOrder = (order) => {
+    let imageSource = order.id === '1' ? require('../assets/thai.png') : require('../assets/rt.png');
+  
+    return (
+      <View key={order.id} style={styles.completedOrderContainer}>
+        <View style={styles.orderHeader}>
+          <Image source={imageSource} style={styles.restaurantImage} />
+          <Text style={styles.restaurantName}>{order.restaurant}</Text>
+        </View>
+        <Text style={styles.orderDate}>{order.date} • {order.price} • {order.items}</Text>
+        <Text style={styles.orderDetails}>{order.details}</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>Reorder</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton}>
+            <Text style={styles.actionButtonText}>View Receipt</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
+  
 
   const renderProgressBar = () => {
     return (
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBarLine} />
-        <FontAwesome name="industry" size={24} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-        <FontAwesome name="building" size={24} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-        <FontAwesome name="car" size={24} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-        <FontAwesome name="lock" size={24} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
+        <FontAwesome name="industry" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
+        <FontAwesome name="building" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
+        <FontAwesome name="car" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
+        <FontAwesome name="lock" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
       </View>
     );
   };
@@ -127,18 +145,26 @@ const OrdersScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+<ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: 20 }}>
         <Text style={styles.header}>Orders</Text>
         <View style={styles.shadowBox}>
         {/* Active Order */}
         <MapView
-          style={styles.map}
-          region={activeOrder.mapRegion}
-          scrollEnabled={false}
-          zoomEnabled={false}
-        >
-          <Marker coordinate={activeOrder.mapRegion} />
-        </MapView>
+            style={styles.map}
+            initialRegion={{
+              latitude: 47.655548,
+              longitude: -122.303200,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}>
+            <Marker
+              coordinate={{
+                latitude: 47.655548,
+                longitude: -122.303200,
+              }}
+              title="Suzzallo Food Locker"
+            />
+          </MapView>
         <View style={styles.activeOrderContainer}>
           <Text style={styles.restaurantName}>McDonald's</Text>
           <Text style={styles.orderStatus}>
@@ -149,14 +175,21 @@ const OrdersScreen = ({ navigation }) => {
           </Text>
           {/* Progress Bar */}
           <View style={progressBarStyles.container}>
-        <View style={progressBarStyles.line} />
-        <View style={progressBarStyles.completedLine} />
-        {/* Icons for the progress bar */}
-        <FontAwesome name="industry" size={24} color="black" style={progressBarStyles.icon} />
-        <FontAwesome name="building" size={24} color="black" style={progressBarStyles.icon} />
-        <FontAwesome name="car" size={24} color="black" style={progressBarStyles.icon} />
-        <FontAwesome name="lock" size={24} color="black" style={progressBarStyles.icon} />
-      </View>
+  <View style={progressBarStyles.line} />
+  {progress > 0 && <View style={progressBarStyles.completedLine} />}
+  <View style={progressBarStyles.iconContainer}>
+    <FontAwesome name="industry" size={18} color="black" />
+  </View>
+  <View style={progressBarStyles.iconContainer}>
+    <FontAwesome name="building" size={18} color="black" />
+  </View>
+  <View style={progressBarStyles.iconContainer}>
+    <FontAwesome name="car" size={18} color="black" />
+  </View>
+  <View style={progressBarStyles.iconContainer}>
+    <FontAwesome name="lock" size={18} color="black" />
+  </View>
+</View>
 
 
       <TouchableOpacity style={styles.orderDetailsButton} onPress={handleViewOrderDetails}>
@@ -167,7 +200,7 @@ const OrdersScreen = ({ navigation }) => {
         {/* Completed Orders */}
         <Text style={styles.completedOrdersHeader}>Completed</Text>
         {completedOrders.map(renderCompletedOrder)}
-      </ScrollView>
+        </ScrollView>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNavigationBar}>
@@ -194,6 +227,7 @@ const OrdersScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
+
   );
 };
 
@@ -205,6 +239,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    paddingBottom: 150, // Adjust this value as needed, it should be at least the height of the bottom navigation bar
   },
   header: {
     fontSize: 32,
@@ -262,10 +297,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     padding: 16,
-  },
-  // Add styles for the completed orders and bottom navigation bar
-  bottomNavigationBar: {
-    // Styles for the navigation bar
   },
   completedOrderContainer: {
     backgroundColor: '#ffffff', // Assuming white background for each order container
@@ -348,7 +379,8 @@ const styles = StyleSheet.create({
   },
   orderDate: {
     color: '#757575',
-    paddingBottom: 8,
+    paddingTop: 12,
+    paddingBottom: 5,
   },
   orderDetails: {
     paddingLeft: 1,
@@ -384,7 +416,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     paddingVertical: 10,
     position: 'absolute',
-    bottom: 0,
+    bottom: 7,
     left: 0,
     right: 0,
   },
@@ -412,6 +444,16 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 0,
     marginBottom: 16,
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  restaurantImage: {
+    width: 30, // Size of the image
+    height: 30, // Size of the image
+    borderRadius: 15, // Half the size to make it circular
+    marginRight: 10, // Add some margin between the image and the text
   },
 });
 
