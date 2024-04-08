@@ -9,6 +9,7 @@ import OrdersScreen from './components/OrdersScreen';
 import LoginScreen from './components/LoginScreen';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebaseConfig';
+import CheckoutScreen from './components/CheckoutScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,19 +18,12 @@ const InsideStack = createNativeStackNavigator();
 function InsideLayout() {
   return (
     <InsideStack.Navigator>
+      <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Home" component={SuzzalloFoodLockerScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{ headerShown: false }} />
-      <InsideStack.Screen
-        name="Cart"
-        component={CartScreen}
-        options={{ headerShown: false }}
-      />
+      <InsideStack.Screen name="Cart" component={CartScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{ headerShown: false }} />
-      <InsideStack.Screen
-        name="Orders" // This is the route name you'll use in the navigation.navigate function
-        component={OrdersScreen}
-        options={{ headerShown: false }}
-      />
+      <InsideStack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} />
     </InsideStack.Navigator>
   );
 }
