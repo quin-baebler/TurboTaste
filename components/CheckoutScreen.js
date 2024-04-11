@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
 
 import TopNavBar from "./TopNavBar";
-import Map from "./Map";
 import ChooseLocationTime from "./ChooseLocationTime";
 import { addDoc, collection } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
@@ -39,7 +39,22 @@ const CheckoutScreen = ({ navigation, orderDetail }) => {
       <TopNavBar navigation={navigation} />
       <ScrollView>
         <View style={styles.sectionContainer}>
-          <Map />
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: 47.655548,
+              longitude: -122.303200,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}>
+            <Marker
+              coordinate={{
+                latitude: 47.655548,
+                longitude: -122.303200,
+              }}
+              title="Suzzallo Food Locker"
+            />
+          </MapView>
         </View>
         <View style={styles.sectionContainer}>
           <ChooseLocationTime />
@@ -122,6 +137,10 @@ const styles = StyleSheet.create({
   sectionContainer: {
     paddingTop: 20,
     paddingHorizontal: 20
+  },
+  map: {
+    height: Dimensions.get('window').height / 5,
+    borderRadius: 10
   },
   tapItems: {
     flexDirection: "row",
