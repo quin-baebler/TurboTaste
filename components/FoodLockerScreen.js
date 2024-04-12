@@ -2,6 +2,7 @@ import { StatusBar, TouchableOpacity, View, Text, Image, ScrollView, StyleSheet,
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
+import BackButton from './BackButton';
 
 const restaurants = [
   {
@@ -30,9 +31,15 @@ const restaurants = [
 
 const FoodLockerScreen = () => {
   const navigation = useNavigation();
+
+  const toRestaurantScreen = (restaurantName) => () => {
+    navigation.navigate('RestaurantDetail', { restaurantName });
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
+      <BackButton />
       <View style={[{ borderBottomColor: 'lightgrey' }, { borderBottomWidth: 1 }]}>
         <MapView
           style={styles.map}
@@ -54,8 +61,8 @@ const FoodLockerScreen = () => {
       </View>
       <ScrollView>
         {restaurants.map((restaurant, index) => (
-          <View key={index} style={styles.restaurantCard}>
-            <TouchableOpacity onPress={() => navigation.navigate('McDonaldsDetail')}>
+          <View key={index} style={styles.restaurantCard} >
+            <TouchableOpacity onPress={toRestaurantScreen(restaurant.name)}>
               <Image source={restaurant.image} style={styles.restaurantImg} />
               <View style={styles.restaurantInfo}>
                 <View style={styles.lineSection}>
@@ -72,13 +79,14 @@ const FoodLockerScreen = () => {
                 </View>
               </View>
             </TouchableOpacity>
-            {index < restaurants.length - 1 && <View style={styles.separator} />}
           </View>
         ))}
       </ScrollView>
     </View>
   );
 }
+
+export default FoodLockerScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -135,5 +143,3 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
 })
-
-export default FoodLockerScreen;

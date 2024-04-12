@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import FoodLockerScreen from './components/FoodLockerScreen';
-import McDonaldsDetailScreen from './components/McDonaldsDetailScreen';
+import RestaurantDetailScreen from './components/RestaurantDetailScreen';
 import CartScreen from './components/CartScreen';
 import SubmittingOrderScreen from './components/SubmittingOrderScreen';
 import OrdersScreen from './components/OrdersScreen';
@@ -23,8 +23,8 @@ function InsideNav() {
     <InsideStack.Navigator>
       {/* <InsideStack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} /> */}
       {/* <InsideStack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: false }} /> */}
-      {/* <InsideStack.Screen name="FoodLocker" component={FoodLockerScreen} options={{ headerShown: false }} /> */}
-      <InsideStack.Screen name="McDonaldsDetail" component={McDonaldsDetailScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="FoodLocker" component={FoodLockerScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="RestaurantDetail" component={RestaurantDetailScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Cart" component={CartScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} />
