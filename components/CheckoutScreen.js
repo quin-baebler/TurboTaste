@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Pressable, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
-
-import TopNavBar from "./TopNavBar";
 import ChooseLocationTime from "./ChooseLocationTime";
 import { addDoc, collection } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
-const CheckoutScreen = ({ navigation, orderDetail }) => {
+const CheckoutScreen = ({ navigation, route }) => {
   const { currentUser } = FIREBASE_AUTH;
+  const { summary, cartItems } = route.params;
+
+  console.log('CheckoutScreen', summary, cartItems);
 
   const [selectedTip, setSelectedTip] = useState(0);
-  const tips = ['$3.00', '$4.00', '$5.00', 'Other'];
+  const tips = [3, 3.5, 4, 5];
 
   const dummyOrderDetail = {
     userID: currentUser.uid,
@@ -24,6 +24,7 @@ const CheckoutScreen = ({ navigation, orderDetail }) => {
   }
 
   const placeOrder = async () => {
+    console.log('Placing order...');
     try {
       const response = await addDoc(collection(FIREBASE_DB, 'Orders'), dummyOrderDetail);
       const newOrderID = response.id;
@@ -34,10 +35,11 @@ const CheckoutScreen = ({ navigation, orderDetail }) => {
     }
   }
 
+  const calculateTotal = parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip];
+
   return (
-    <SafeAreaView style={styles.container}>
-      <TopNavBar navigation={navigation} />
-      <ScrollView>
+    <View style={styles.container}>
+      <ScrollView style={{ flex: 1 }}>
         <View style={styles.sectionContainer}>
           <MapView
             style={styles.map}
@@ -83,23 +85,19 @@ const CheckoutScreen = ({ navigation, orderDetail }) => {
         <View style={styles.sectionContainer}>
           <View style={styles.costBreakDownContainer}>
             <Text style={styles.categoryText}>Subtotal</Text>
-            <Text style={styles.categoryText}>$15.00</Text>
+            <Text style={styles.categoryText}>${summary.subtotal}</Text>
           </View>
           <View style={styles.costBreakDownContainer}>
             <Text style={styles.categoryText}>Delivery Fee</Text>
-            <Text style={styles.categoryText}>$2.00</Text>
+            <Text style={styles.categoryText}>${summary.deliveryFee}</Text>
           </View>
           <View style={styles.costBreakDownContainer}>
             <Text style={styles.categoryText}>Fees & Estimated Tax</Text>
-            <Text style={styles.categoryText}>$1.80</Text>
-          </View>
-          <View style={styles.costBreakDownContainer}>
-            <Text style={styles.categoryText}>Mass Delivery Credits</Text>
-            <Text style={styles.categoryText}>-$5.00</Text>
+            <Text style={styles.categoryText}>${(parseFloat(summary.fees) + parseFloat(summary.estimatedTax)).toFixed(2)}</Text>
           </View>
           <View style={[styles.costBreakDownContainer, { marginTop: 20 }]}>
             <Text style={styles.categoryText}>Dasher Tip</Text>
-            <Text style={styles.categoryText}>{tips[selectedTip]}</Text>
+            <Text style={styles.categoryText}>${tips[selectedTip].toFixed(2)}</Text>
           </View>
           <View style={styles.tipContainer}>
             {tips.map((tip, index) => (
@@ -107,23 +105,21 @@ const CheckoutScreen = ({ navigation, orderDetail }) => {
                 key={index}
                 style={[styles.tipOption, selectedTip === tips.indexOf(tip) ? styles.selectedTipOption : null]}
                 onPress={() => setSelectedTip(index)}>
-                <Text style={[styles.tipText, selectedTip === tips.indexOf(tip) ? styles.selectedTipText : null]}>{tip}</Text>
+                <Text style={[styles.tipText, selectedTip === tips.indexOf(tip) ? styles.selectedTipText : null]}>${tip.toFixed(2)}</Text>
               </TouchableOpacity>
             ))}
           </View>
           <Text style={styles.smallText}>100% of the tip goes to your Dasher.</Text>
           <View style={[styles.costBreakDownContainer, { paddingTop: 10 }]}>
             <Text style={[styles.categoryText, { fontWeight: 800 }, { fontSize: Dimensions.get('window').width / 20 }]}>Total</Text>
-            <Text style={[styles.categoryText, { fontWeight: 800 }, { fontSize: Dimensions.get('window').width / 20 }]}>$16.8</Text>
+            <Text style={[styles.categoryText, { fontWeight: 800 }, { fontSize: Dimensions.get('window').width / 20 }]}>${calculateTotal}</Text>
           </View>
         </View>
       </ScrollView>
-      <View style={styles.sectionContainer}>
-        <Pressable style={styles.button} onPress={placeOrder}>
-          <Text style={styles.buttonText}>Place Order</Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+      <Pressable style={styles.button} onPress={placeOrder}>
+        <Text style={styles.buttonText}>Place Order</Text>
+      </Pressable>
+    </View>
   )
 }
 
@@ -132,7 +128,8 @@ export default CheckoutScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    justifyContent: "space-between"
   },
   sectionContainer: {
     paddingTop: 20,
@@ -209,11 +206,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    backgroundColor: 'red',
-    padding: 15,
+    marginHorizontal: 20,
+    width: '90%',
+    height: 50,
     borderRadius: 200,
+    backgroundColor: 'red',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 20
+    flexDirection: 'row',
+    bottom: 20,
+    marginTop: 30,
   },
   buttonText: {
     color: 'white',

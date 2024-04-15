@@ -102,7 +102,7 @@ export default function LoginScreen() {
             </>
           )}
         </View>
-      </Modal >
+      </Modal>
 
       <StatusBar style="auto" />
     </View >

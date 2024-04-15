@@ -1,151 +1,139 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView, Switch } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons'; // make sure to import AntDesign for the arrow icon
+import { Ionicons } from '@expo/vector-icons';
 
-const CartScreen = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: '1', name: 'Big Mac', price: 17.0, quantity: 6, image: require('../assets/big_mac.jpg') },
-    { id: '2', name: 'Filet-O-Fish', price: 17.0, quantity: 4, image: require('../assets/fof.png') },
-    { id: '3', name: 'Chicken Sandwich', price: 10.0, quantity: 3, image: require('../assets/chicken_sandwich.jpg') },
-  ]);
-
+const CartScreen = ({ route }) => {
+  const navigation = useNavigation();
+  const { cartItems, restaurantDetails } = route.params;
   const [additionalItems] = useState([
-    { id: '1', name: 'French Fries', price: 6.0, image: require('../assets/fries.jpg') },
+    { id: '1', name: 'French Fries', price: 6.00, image: require('../assets/fries.jpg') },
     { id: '2', name: 'Chocolate Milkshake', price: 2.0, image: require('../assets/milkshake.jpg') },
     { id: '3', name: 'McFlurry', price: 3.0, image: require('../assets/mcflurry.jpg') },
   ]);
 
-  const [includeUtensils, setIncludeUtensils] = useState(false);
-
-  const updateQuantity = (id, delta) => {
-    setCartItems(currentItems =>
-      currentItems.map(item =>
-        item.id === id ? { ...item, quantity: item.quantity + delta } : item
-      )
-    );
+  const onAddItem = (item) => {
+    props.handleAddItem(item);
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2);
+  const onRemoveItem = (item) => {
+    props.handleRemoveItem(item);
   };
 
   const renderCartItem = ({ item }) => (
-    <View style={styles.cartItem}>
-      <Image source={item.image} style={styles.itemImage} />
+    <View style={styles.cartItem} key={item.FoodName}>
+      <Image source={{ uri: item.Img }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
-        <View style={styles.itemTextContainer}>
-          <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.price}>${item.price.toFixed(2)}</Text>
-        </View>
-        <View style={styles.itemQuantity}>
-          <TouchableOpacity
-            style={[styles.roundButton, item.quantity === 1 && styles.roundButtonDisabled]}
-            onPress={() => updateQuantity(item.id, -1)}
-            disabled={item.quantity === 1}
-          >
-            <FontAwesome name="minus" size={16} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.quantityText}>{item.quantity}</Text>
-          <TouchableOpacity
-            style={styles.roundButton}
-            onPress={() => updateQuantity(item.id, 1)}
-          >
-            <FontAwesome name="plus" size={16} color="#333" />
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.itemName}>{item.FoodName}</Text>
+        <Text style={styles.itemPrice}>${item.Price}</Text>
+      </View>
+      <View style={styles.itemQuantity}>
+        <TouchableOpacity
+          style={[styles.roundButton, item.quantity === 1 && styles.roundButtonDisabled]}
+          onPress={() => onRemoveItem(item)}
+          disabled={item.Quantity <= 1}
+        >
+          <Ionicons name="remove" size={20} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.quantityText}>{item.Quantity}</Text>
+        <TouchableOpacity
+          style={styles.roundButton}
+          onPress={() => onAddItem(item)}
+        >
+          <Ionicons name="add" size={24} color="black" />
+        </TouchableOpacity>
       </View>
     </View>
   );
-  
-  
 
   const renderAdditionalItem = ({ item }) => (
     <View style={styles.featuredItemContainer}>
-      <Image source={item.image} style={styles.featuredItem} />
-      <Text style={styles.featuredItemTitle}>{item.name}</Text>
-      <TouchableOpacity style={styles.addIconContainer}>
-        <FontAwesome name="plus-circle" size={22} color="red" />
-      </TouchableOpacity>
+      <Image source={item.image} style={styles.featuredItemImg} />
+      <View style={styles.featureItemInfoContainer}>
+        <Text style={styles.featuredItemTitle}>{item.name}</Text>
+        <Text style={styles.featuredItemPrice}>${item.price.toFixed(2)}</Text>
+      </View>
     </View>
   );
 
-  const DeliveryFee = () => (
-    <View style={styles.deliveryFeeContainer}>
-      <Text style={styles.originalFee}>$2.50</Text>
-      <Text style={styles.discountedFee}>$0.50</Text>
-    </View>
-  );
+  const calculateSummary = () => {
+    const subtotal = cartItems.reduce((acc, item) => acc + item.Price * item.Quantity, 0);
+    const deliveryFee = 0;
+    const fees = subtotal * 0.05;
+    const estimatedTax = subtotal * 0.10;
+    const total = subtotal + deliveryFee + fees + estimatedTax;
 
-  const navigation = useNavigation(); // using the useNavigation hook if not destructured from props
+    return { subtotal, deliveryFee, fees, estimatedTax, total };
+  }
 
-  const handleContinue = () => {
-    navigation.navigate('SubmittingOrder');
+  const goToCheckout = () => {
+    console.log('Continue to checkout');
+    navigation.navigate('Checkout', {
+      summary: {
+        subtotal: calculateSummary().subtotal.toFixed(2),
+        deliveryFee: calculateSummary().deliveryFee.toFixed(2),
+        fees: calculateSummary().fees.toFixed(2),
+        estimatedTax: calculateSummary().estimatedTax.toFixed(2),
+        total: calculateSummary().total.toFixed(2)
+      },
+      cartItems: cartItems
+    });
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <FontAwesome name="angle-left" size={24} color="black" style={{ flex: 1 }} />
-        <Text style={styles.headerTitle} numberOfLines={1} >Mass Delivery</Text>
-        <FontAwesome name="user-plus" size={24} color="black" style={{ flex: 1, textAlign: 'right' }} />
-      </View>
-      
-      <Text style={styles.restaurantTitle}>McDonald's</Text>
-      
-      <FlatList
-        data={cartItems}
-        renderItem={renderCartItem}
-        keyExtractor={item => item.id}
-        scrollEnabled={false}
-      />
-      
-      <TouchableOpacity style={styles.addMoreItemsContainer}>
-        <Text style={styles.addMoreItemsText}>+ Add more items</Text>
-      </TouchableOpacity>
-      
-      <Text style={styles.additionalItemsHeader}>Additional Items</Text>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={additionalItems}
-        renderItem={renderAdditionalItem}
-        keyExtractor={item => item.id}
-        style={styles.carousel}
-      />
+    <View style={styles.container}>
+      <ScrollView>
+        <Text style={styles.sectionContainer}>{restaurantDetails.RestaurantName}</Text>
 
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryTitle}>Summary</Text>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Subtotal</Text>
-          <Text style={styles.summaryValue}>${calculateTotal()}</Text>
+        <FlatList
+          data={cartItems}
+          renderItem={renderCartItem}
+          keyExtractor={item => item.FoodName}
+          scrollEnabled={false}
+        />
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.additionalItemsHeader}>Additional Items</Text>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={additionalItems}
+            renderItem={renderAdditionalItem}
+            keyExtractor={item => item.id}
+            style={styles.carousel}
+          />
         </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Delivery Fee</Text>
-          <DeliveryFee />
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.summaryTitle}>Summary</Text>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Subtotal</Text>
+            <Text style={styles.summaryValue}>${calculateSummary().subtotal.toFixed(2)}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Delivery Fee</Text>
+            <View style={styles.deliveryFeeContainer}>
+              <Text style={styles.originalFee}>$2.50 </Text>
+              <Text style={styles.summaryValue}>${calculateSummary().deliveryFee.toFixed(2)}</Text>
+            </View>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Fees & Estimated Tax</Text>
+            <View style={styles.deliveryFeeContainer}>
+              <Text style={styles.originalFee}>$4.00 </Text>
+              <Text style={styles.summaryValue}>${(calculateSummary().fees + calculateSummary().estimatedTax).toFixed(2)}</Text>
+            </View>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryLabel, { fontWeight: 'bold' }]}>Total</Text>
+            <Text style={[styles.summaryValue, { fontWeight: 'bold' }]}>${calculateSummary().total.toFixed(2)}</Text>
+          </View>
         </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Fees & Estimated Tax</Text>
-          <Text style={styles.discountedFeeGreen}>$0.50</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>DoorDash Credits</Text>
-          <Text style={styles.discountedFeeGreen}>-$5.00</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Total</Text>
-          <Text style={styles.summaryValue}>${(parseFloat(calculateTotal()) + 0.50 + 0.50 - 5.00).toFixed(2)}</Text>
-        </View>
-        <View style={styles.savingsContainer}>
-          <Text style={styles.savingsText}>Saving $8.10 on Mass Delivery</Text>
-        </View>
-      </View>
-      
-      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+      </ScrollView>
+      <TouchableOpacity style={styles.continueButton} onPress={goToCheckout}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -153,287 +141,123 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 45, // Add padding at the top to lower the header
-    paddingBottom: 5,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    backgroundColor: '#f2f2f2',
-    height: 100, // Provide a fixed height to the header
-    alignItems: 'center', // Center items vertically
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    flex: 0, // Adjust this so that it doesn't stretch and allow for the arrow icon
-  },
-  itemQuantity: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 15,
-    padding: 2,
-    marginLeft: 215,
-    marginTop: 20,
-    width: 100, // You can adjust this width as needed
-    position: 'absolute', 
+    backgroundColor: 'white'
   },
   cartItem: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    borderBottomColor: 'lightgray',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  itemTextContainer: {
-    flexDirection: 'column', // Stack the name and price on top of each other
-  },
-  restaurantTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginVertical: 5, // Add some vertical space above and below the restaurant title
-    marginLeft: 10,
-    marginTop: 10,
+    padding: 10
   },
   itemImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
+    width: Dimensions.get('window').width / 4,
+    height: 100,
+    resizeMode: 'center'
   },
   itemDetails: {
     flex: 1,
-    justifyContent: 'space-between',
-    marginLeft: 10, // Add some space between image and details
+    marginLeft: 10,
+    justifyContent: 'center',
+    gap: 5
   },
   itemName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4, // Space between name and price
+    fontWeight: 'bold'
   },
-  itemRightSide: {
-    alignItems: 'flex-end',
+  itemPrice: {
+    color: 'black',
+    fontWeight: '400'
   },
-  quantityContainer: {
+  itemQuantity: {
+    width: Dimensions.get('window').width / 5,
+    height: 35,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
-  },
-  roundButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 15,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderRadius: 200,
+    justifyContent: 'space-between',
+    padding: 5
   },
   quantityText: {
-    marginHorizontal: 15, // Space around the quantity number
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
-  roundButtonDisabled: {
-    backgroundColor: '#e6e6e6',
-  },
-  quantity: {
-    marginHorizontal: 10,
-    fontSize: 16,
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  quantityDisplay: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 8, // Provide some horizontal margin
-  },
-  addMoreItemsContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    alignSelf: 'flex-end',
-    backgroundColor: '#f2f2f2',
-    borderRadius: 20,
-  },
-  addMoreItemsText: {
-    color: '#000',
-    fontWeight: 'bold',
-    
+  sectionContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    marginTop: 20,
+    borderBottomColor: 'lightgray',
+    borderBottomWidth: 1
   },
   additionalItemsHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    paddingVertical: 10,
-    marginRight: 20,
-    paddingHorizontal: 16,
   },
-  additionalItemsList: {
-    marginBottom: 10,
+  featuredItemContainer: {
+    marginTop: 10,
+    width: Dimensions.get('window').width / 4,
+    marginRight: 10
   },
-  additionalItem: {
-    marginRight: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+  featuredItemImg: {
+    width: Dimensions.get('window').width / 4,
+    height: 100,
+    borderRadius: 10,
+    resizeMode: 'center',
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderRadius: 10
   },
-  additionalItemImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 30,
+  featureItemInfoContainer: {
+    marginTop: 5
   },
-  additionalItemName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginTop: 4,
-  },
-  additionalItemPrice: {
-    fontSize: 14,
-  },
-  utensilsSwitchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-  },
-  utensilsSwitchLabel: {
-    fontSize: 16,
-  },
-  summaryContainer: {
-    padding: 10,
+  featuredItemTitle: {
+    fontWeight: 'bold'
   },
   summaryTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 10
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 5
   },
   summaryLabel: {
-    fontSize: 16,
-    color: '#333',
-
+    fontWeight: '500',
+    fontSize: 16
   },
   summaryValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  savingsContainer: {
-    backgroundColor: '#e8f5e9',
-    borderRadius: 5,
-    padding: 20,
-    margin: 25,
-    marginBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  savingsText: {
-    color: '#2e7d32',
-    fontWeight: 'bold',
-  },
-  continueButton: {
-    backgroundColor: 'red',
-    borderRadius: 30,
-    padding: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 25, 
-    width: '90%',
-    alignSelf: 'center',
-    marginBottom: 40,
-  },
-  continueButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  discountedFee: {
-    marginLeft: 5,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '500',
+    fontSize: 16
   },
   deliveryFeeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row'
   },
   originalFee: {
     textDecorationLine: 'line-through',
-    color: '#757575',
+    color: 'gray',
+    fontSize: 16
   },
-  addMoreItemsButtonText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  addMoreItemsButton: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 20,
-    padding: 10,
-    alignSelf: 'flex-end',
-    marginRight: 16,
-    marginTop: 8,
-  },
-  featuredItemContainer: {
+  continueButton: {
+    marginHorizontal: 20,
+    width: '90%',
+    height: 50,
+    borderRadius: 200,
+    backgroundColor: 'red',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
-    position: 'relative',
-  },
-  featuredItem: {
-    width: 120,
-    height: 120,
-    borderRadius: 10,
-  },
-  featuredItemTitle: {
-    marginTop: 5,
-    width: 100, // Adjust based on your content
-    textAlign: 'center',
-  },
-  carousel: {
-    paddingVertical: 10, // Adjust as needed
-    position: 'relative',
-    marginLeft: 20,
-  },
-  addIconContainer: {
-    position: 'absolute',
-    bottom: 15,
-    left: 105,
-  },
-  headerTitleContainer: {
-    backgroundColor: '#e6e6e6',
-    borderRadius: 15,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  promoContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 16,
-    alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    paddingHorizontal: 20
   },
-  discountText: {
+  continueButtonText: {
+    color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
-  },
-  separator: {
-    borderBottomColor: '#cccccc',
-    borderBottomWidth: 1,
-    marginHorizontal: 16,
-  },
-  discountedFee: {
-    color: 'green',
-    fontWeight: 'bold',
+    fontSize: 16
   },
 });
 
