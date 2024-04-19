@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Pressable } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import ChooseLocationTime from "./ChooseLocationTime";
@@ -16,9 +16,13 @@ const CheckoutScreen = ({ route }) => {
   const [selectedTip, setSelectedTip] = useState(0);
   const tips = [3, 3.5, 4, 5];
 
+  const [loading, setLoading] = useState(false);
+
   const calculateTotal = parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip];
 
   const placeOrder = async () => {
+    setLoading(true);
+
     const FoodItemIDs = cartItems.map(item => {
       return { FoodItemID: item.FoodItemID, Quantity: item.Quantity }
     });
@@ -45,6 +49,7 @@ const CheckoutScreen = ({ route }) => {
       console.error('Error adding document: ', error);
     } finally {
       // navigate to order confirmation screen
+      setLoading(false);
       navigation.navigate('OrderComplete', { orderPool });
     }
   }
@@ -129,7 +134,13 @@ const CheckoutScreen = ({ route }) => {
         </View>
       </ScrollView>
       <Pressable style={styles.button} onPress={placeOrder}>
-        <Text style={styles.buttonText}>Place Order</Text>
+        {
+          loading ? (
+            <ActivityIndicator size="small" color="white"/>
+          ) : (
+            <Text style={styles.buttonText}>Place Order</Text>
+          )
+        }
       </Pressable>
     </View>
   )

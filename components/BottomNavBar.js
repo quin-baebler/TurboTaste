@@ -5,11 +5,11 @@ import { useNavigation, useNavigationState } from '@react-navigation/native';
 
 const BottomNavBar = () => {
   const navBarItems = [
-    { name: 'Home', icon: 'home-outline' },
-    { name: 'Grocery', icon: 'nutrition-outline' },
-    { name: 'Shopping', icon: 'bag-handle-outline' },
-    { name: 'Browse', icon: 'search-outline' },
-    { name: 'Order', icon: 'cart-outline' }
+    { name: 'Home', icon: 'home-outline', nav: 'Home' },
+    { name: 'Grocery', icon: 'nutrition-outline', nav: 'Home' },
+    { name: 'Shopping', icon: 'bag-handle-outline', nav: 'Home' },
+    { name: 'Browse', icon: 'search-outline', nav: 'Home' },
+    { name: 'Order', icon: 'cart-outline', nav: 'Home' }
   ]
 
   const navigation = useNavigation();
@@ -27,7 +27,7 @@ const BottomNavBar = () => {
       {
         navBarItems.map((item, index) => {
           return (
-            <TouchableOpacity key={index} style={styles.navItem} onPress={() => navigateTo('McDonaldsDetail')}>
+            <TouchableOpacity key={index} style={styles.navItem} onPress={() => navigateTo(item.nav)}>
               <Ionicons name={item.icon} size={24} color={isActive(item.name) ? "red" : "black"} />
               <Text style={[styles.navItemText, isActive(item.name) && { color: 'red' }]}>{item.name}</Text>
             </TouchableOpacity>
