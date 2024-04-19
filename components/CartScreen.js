@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const CartScreen = ({ route }) => {
   const navigation = useNavigation();
-  const { cartItems, restaurantDetails } = route.params;
+  const { cartItems, orderPool } = route.params;
   const [additionalItems] = useState([
     { id: '1', name: 'French Fries', price: 6.00, image: require('../assets/fries.jpg') },
     { id: '2', name: 'Chocolate Milkshake', price: 2.0, image: require('../assets/milkshake.jpg') },
@@ -22,7 +22,7 @@ const CartScreen = ({ route }) => {
 
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem} key={item.FoodName}>
-      <Image source={{ uri: item.Img }} style={styles.itemImage} />
+      <Image source={{ uri: item.Image }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.FoodName}</Text>
         <Text style={styles.itemPrice}>${item.Price}</Text>
@@ -67,7 +67,6 @@ const CartScreen = ({ route }) => {
   }
 
   const goToCheckout = () => {
-    console.log('Continue to checkout');
     navigation.navigate('Checkout', {
       summary: {
         subtotal: calculateSummary().subtotal.toFixed(2),
@@ -76,14 +75,15 @@ const CartScreen = ({ route }) => {
         estimatedTax: calculateSummary().estimatedTax.toFixed(2),
         total: calculateSummary().total.toFixed(2)
       },
-      cartItems: cartItems
+      cartItems: cartItems,
+      orderPool: orderPool
     });
   };
 
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Text style={styles.sectionContainer}>{restaurantDetails.RestaurantName}</Text>
+        <Text style={styles.restaurantTitle}>{orderPool.Restaurant.RestaurantName}</Text>
 
         <FlatList
           data={cartItems}
@@ -142,6 +142,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white'
+  },
+  restaurantTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginHorizontal: 20,
+    marginTop: 10
   },
   cartItem: {
     flexDirection: 'row',

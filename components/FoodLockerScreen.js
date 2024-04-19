@@ -3,37 +3,45 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import BackButton from './BackButton';
+import { useEffect, useState } from 'react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { FIREBASE_DB } from '../firebaseConfig';
 
-const restaurants = [
-  {
-    name: 'McDonalds',
-    cuisine: 'Burgers',
-    price: '$$',
-    rating: '4.7',
-    reviews: '(1300)',
-    orders: '23 Orders',
-    orderTime: 'Order By 12:30 PM',
-    deliveryTime: 'Delivery at 1:30 PM',
-    image: require('../assets/mcdonalds_burger.jpg'),
-  },
-  {
-    name: 'Chipotle',
-    cuisine: 'Bowls and Wraps',
-    price: '$$',
-    rating: '4.6',
-    reviews: '(780)',
-    orders: '17 Orders',
-    orderTime: 'Order By 2:30 PM',
-    deliveryTime: 'Delivery at 3:30 PM',
-    image: require('../assets/chipotle_bowl.jpg'),
-  },
-];
-
-const FoodLockerScreen = () => {
+const FoodLockerScreen = ({ route }) => {
   const navigation = useNavigation();
+  const { orderPools } = route.params;
 
-  const toRestaurantScreen = (restaurantName) => () => {
-    navigation.navigate('RestaurantDetail', { restaurantName });
+  const toRestaurantScreen = (orderPool) => () => {
+    navigation.navigate('RestaurantDetail', { orderPool });
+  }
+
+  const parseTime = (time) => {
+    let parsed = time.toDate();
+    return parsed.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  }
+
+  const RenderOrderPools = () => {
+    return orderPools.map(orderPool => (
+      <View key={orderPool.OrderPoolID} style={styles.restaurantCard} >
+        <TouchableOpacity onPress={toRestaurantScreen(orderPool)}>
+          <Image source={{ uri: orderPool.Restaurant.Image }} style={styles.restaurantImg} />
+          <View style={styles.restaurantInfo}>
+            <View style={styles.lineSection}>
+              <Text style={styles.restaurantName}>{orderPool.Restaurant.RestaurantName}</Text>
+              <Text style={styles.orderNumber}>{orderPool.OrderID.length} {orderPool.OrderID.length > 1 ? 'Orders' : 'Order'}</Text>
+            </View>
+            <View style={styles.lineSection}>
+              <Text style={styles.secondaryText}>{orderPool.Restaurant.Cuisine} • {orderPool.Restaurant.Price}</Text>
+              <Text style={styles.secondaryText}>Order By {parseTime(orderPool.EndTime)}</Text>
+            </View>
+            <View style={styles.lineSection}>
+              <Text style={styles.secondaryText}>{orderPool.Restaurant.Rating} <FontAwesome name="star" size={16} color="gold" /> {orderPool.RestaurantReviews}</Text>
+              <Text style={styles.secondaryText}>Deliver By {parseTime(orderPool.DeliveryTime)}</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    ));
   }
 
   return (
@@ -44,43 +52,48 @@ const FoodLockerScreen = () => {
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: 47.655548,
-            longitude: -122.303200,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitude: orderPools[0].FoodLocker.Latitude,
+            longitude: orderPools[0].FoodLocker.Longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
           }}>
           <Marker
             coordinate={{
-              latitude: 47.655548,
-              longitude: -122.303200,
+              latitude: orderPools[0].FoodLocker.Latitude,
+              longitude: orderPools[0].FoodLocker.Longitude,
             }}
-            title="Suzzallo Food Locker"
+            title={orderPools[0].FoodLocker.FoodLockerName}
+            description='Food Locker'
           />
         </MapView>
-        <Text style={styles.screenTitle}>Suzzallo Food Locker</Text>
+        <View style={styles.foodLockerNameContainer}>
+          <Text style={styles.secondaryText}>Food Locker</Text>
+          <Text style={styles.screenTitle}>{orderPools[0].FoodLocker.FoodLockerName}</Text>
+        </View>
       </View>
       <ScrollView>
-        {restaurants.map((restaurant, index) => (
+        <RenderOrderPools />
+        {/* {foodLockerRestaurants.map((restaurant, index) => (
           <View key={index} style={styles.restaurantCard} >
             <TouchableOpacity onPress={toRestaurantScreen(restaurant.name)}>
-              <Image source={restaurant.image} style={styles.restaurantImg} />
+              <Image source={{ uri: restaurant.Image }} style={styles.restaurantImg} />
               <View style={styles.restaurantInfo}>
                 <View style={styles.lineSection}>
-                  <Text style={styles.restaurantName}>{restaurant.name}</Text>
+                  <Text style={styles.restaurantName}>{restaurant.RestaurantName}</Text>
                   <Text style={styles.orderNumber}>{restaurant.orders}</Text>
                 </View>
                 <View style={styles.lineSection}>
-                  <Text style={styles.secondaryText}>{restaurant.cuisine} • {restaurant.price}</Text>
-                  <Text style={styles.secondaryText}>{restaurant.orderTime}</Text>
+                  <Text style={styles.secondaryText}>{restaurant.Cuisine} • {restaurant.Price}</Text>
+                  <Text style={styles.secondaryText}>Order By {restaurant.orderTime}</Text>
                 </View>
                 <View style={styles.lineSection}>
-                  <Text style={styles.secondaryText}>{restaurant.rating} <FontAwesome name="star" size={16} color="gold" /> {restaurant.reviews}</Text>
-                  <Text style={styles.secondaryText}>{restaurant.deliveryTime}</Text>
+                  <Text style={styles.secondaryText}>{restaurant.Rating} <FontAwesome name="star" size={16} color="gold" /> {restaurant.Reviews}</Text>
+                  <Text style={styles.secondaryText}>Deliver by {restaurant.deliveryTime}</Text>
                 </View>
               </View>
             </TouchableOpacity>
           </View>
-        ))}
+        ))} */}
       </ScrollView>
     </View>
   );
@@ -95,13 +108,16 @@ const styles = StyleSheet.create({
   },
   screenTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    padding: 16,
-    textAlign: 'center',
-    backgroundColor: '#fff',
+    fontWeight: 'bold'
   },
   map: {
     height: Dimensions.get('window').height / 5,
+  },
+  foodLockerNameContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    padding: 10,
+    alignItems: 'center',
   },
   scrollViewContaier: {
     flex: 1,
@@ -141,5 +157,5 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontSize: 16,
     fontWeight: '600'
-  },
+  }
 })

@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import FoodLockerScreen from './components/FoodLockerScreen';
 import RestaurantDetailScreen from './components/RestaurantDetailScreen';
 import CartScreen from './components/CartScreen';
-import SubmittingOrderScreen from './components/SubmittingOrderScreen';
-import OrdersScreen from './components/OrdersScreen';
 import LoginScreen from './components/LoginScreen';
-import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebaseConfig';
 import CheckoutScreen from './components/CheckoutScreen';
-import { View } from 'react-native';
 import BottomNavBar from './components/BottomNavBar';
-// import HomeScreen from './components/HomeScreen';
+import HomeScreen from './components/HomeScreen';
+import OrderCompleteScreen from './components/OrderCompleteScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +24,7 @@ function InsideNav() {
   const navigation = useNavigation();
   return (
     <InsideStack.Navigator>
-      {/* <InsideStack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} /> */}
+      <InsideStack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="FoodLocker" component={FoodLockerScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="RestaurantDetail" component={RestaurantDetailScreen} options={{ headerShown: false }} />
       <InsideStack.Screen
@@ -53,8 +51,7 @@ function InsideNav() {
           )
         }}
       />
-      {/* <InsideStack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{ headerShown: false }} /> */}
-      {/* <InsideStack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} /> */}
+      <InsideStack.Screen name="OrderComplete" component={OrderCompleteScreen} options={{ headerShown: false }} />
     </InsideStack.Navigator>
   );
 }

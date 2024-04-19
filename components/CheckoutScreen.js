@@ -3,39 +3,51 @@ import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Press
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import ChooseLocationTime from "./ChooseLocationTime";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
 
-const CheckoutScreen = ({ navigation, route }) => {
+const CheckoutScreen = ({ route }) => {
+  const navigation = useNavigation();
+
   const { currentUser } = FIREBASE_AUTH;
-  const { summary, cartItems } = route.params;
-
-  console.log('CheckoutScreen', summary, cartItems);
+  const { summary, cartItems, orderPool } = route.params;
 
   const [selectedTip, setSelectedTip] = useState(0);
   const tips = [3, 3.5, 4, 5];
 
-  const dummyOrderDetail = {
-    userID: currentUser.uid,
-    restaurantID: 1,
-    foodItemIDs: [],
-    totalAmount: 16.8,
-    orderTime: new Date()
-  }
+  const calculateTotal = parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip];
 
   const placeOrder = async () => {
-    console.log('Placing order...');
+    const FoodItemIDs = cartItems.map(item => {
+      return { FoodItemID: item.FoodItemID, Quantity: item.Quantity }
+    });
+
     try {
-      const response = await addDoc(collection(FIREBASE_DB, 'Orders'), dummyOrderDetail);
-      const newOrderID = response.id;
-      console.log(newOrderID);
+      const newOrder = {
+        FoodItemIDs: FoodItemIDs,
+        OrderTime: new Date(),
+        RestaurantID: orderPool.RestaurantID,
+        TotalAmount: parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip],
+        UserID: currentUser.uid
+      }
+      const newOrderResponse = await addDoc(collection(FIREBASE_DB, 'Orders'), newOrder);
+      const newOrderID = newOrderResponse.id;
+
+      if (newOrderID) {
+        const orderPoolRef = doc(FIREBASE_DB, 'OrderPools', orderPool.OrderPoolID);
+        await updateDoc(orderPoolRef, {
+          OrderID: arrayUnion(newOrderID)
+        })
+      }
     } catch (error) {
       // alert the user
       console.error('Error adding document: ', error);
+    } finally {
+      // navigate to order confirmation screen
+      navigation.navigate('OrderComplete', { orderPool });
     }
   }
-
-  const calculateTotal = parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip];
 
   return (
     <View style={styles.container}>
@@ -59,7 +71,7 @@ const CheckoutScreen = ({ navigation, route }) => {
           </MapView>
         </View>
         <View style={styles.sectionContainer}>
-          <ChooseLocationTime />
+          <ChooseLocationTime orderPool={orderPool} />
         </View>
         <View style={styles.sectionContainer}>
           <View style={[styles.tapItems, { paddingTop: 0 }]}>
@@ -112,7 +124,7 @@ const CheckoutScreen = ({ navigation, route }) => {
           <Text style={styles.smallText}>100% of the tip goes to your Dasher.</Text>
           <View style={[styles.costBreakDownContainer, { paddingTop: 10 }]}>
             <Text style={[styles.categoryText, { fontWeight: 800 }, { fontSize: Dimensions.get('window').width / 20 }]}>Total</Text>
-            <Text style={[styles.categoryText, { fontWeight: 800 }, { fontSize: Dimensions.get('window').width / 20 }]}>${calculateTotal}</Text>
+            <Text style={[styles.categoryText, { fontWeight: 800 }, { fontSize: Dimensions.get('window').width / 20 }]}>${calculateTotal.toFixed(2)}</Text>
           </View>
         </View>
       </ScrollView>
