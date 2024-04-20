@@ -26,11 +26,14 @@ const OrderCompleteScreen = ({ route }) => {
       <Text style={styles.textPrimary}>Order Complete</Text>
       <Text style={styles.textBody}>Thank you for your order! Your Order has reached <Text style={{ fontWeight: 'bold' }}>{orderPool.FoodLocker.FoodLockerName}</Text> Food Locker at <Text style={{ fontWeight: 'bold' }}>{parseTime(orderPool.DeliveryTime)}</Text>. Please enter the order ID texted to you, or scan the QR code to unlock your order</Text>
       <Text style={styles.textSecondary}>Scan Me</Text>
+      <View style={styles.centeredContainer}>
       <QRCode
-        size={200}      
+        value="https://example.com" // Replace this with your desired content
+        size={245}      
         color='black'
         backgroundColor='white'
       />
+    </View>
       <TouchableOpacity style={styles.button} onPress={finishOrder}>
         <Text style={styles.buttonText}>Finish Order</Text>
       </TouchableOpacity>
@@ -58,9 +61,10 @@ const styles = StyleSheet.create({
     fontWeight: '400'
   },
   textSecondary: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 'bold',
-    marginVertical: 20
+    marginVertical: 20,
+    marginTop: 90,
   },
   button: {
     marginHorizontal: 20,
@@ -79,5 +83,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: Dimensions.get('window').width / 25
-  }
+  },
 })

@@ -202,9 +202,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   featuredItemContainer: {
-    marginTop: 10,
+    marginTop: 12.5,
     width: Dimensions.get('window').width / 4,
-    marginRight: 10
+    marginRight: 30, // Increase spacing between items
+    marginLeft: 2,
   },
   featuredItemImg: {
     width: Dimensions.get('window').width / 4,
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 20,
+    bottom: 10,
     paddingHorizontal: 20
   },
   continueButtonText: {

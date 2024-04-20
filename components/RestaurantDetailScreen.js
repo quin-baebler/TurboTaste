@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, Modal, Button } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, FlatList, StyleSheet, Dimensions, ActivityIndicator, Modal, Button } from 'react-native';
 import { getDoc, getDocs, doc, query, collection, where } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -100,26 +100,29 @@ const RestaurantDetailScreen = ({ route }) => {
                 <ChooseLocationTime orderPool={orderPool} />
               </View>
               <View style={styles.sectionContainer}>
-                <Text style={styles.secondaryText}>Featured Items</Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <View style={styles.foodItemCardsContainer}>
-                  {
-                    foodItems.map((foodItem, index) => (
-                      <TouchableOpacity key={index} style={styles.foodItemCard}>
-                        <Image source={{ uri: foodItem.Image }} style={styles.foodImage} />
-                        <TouchableOpacity onPress={addItemToCart(foodItem)} style={styles.addFoodButton}>
-                          <Ionicons name="add-outline" size={24} color="black" />
+                  <Text style={styles.secondaryText}>Featured Items</Text>
+                  <FlatList
+                    data={foodItems}
+                    renderItem={({ item }) => (
+                      // Render each item
+                      <TouchableOpacity style={styles.foodItemCard}>
+                        <Image source={{ uri: item.Image }} style={styles.foodImage} />
+                        <TouchableOpacity onPress={addItemToCart(item)} style={styles.addFoodButton}>
+                          <Ionicons name="add-outline" size={22} color="black" />
                         </TouchableOpacity>
                         <View style={styles.foodInfo}>
-                          <Text style={styles.foodName}>{foodItem.FoodName}</Text>
-                          <Text style={styles.foodPrice}>${foodItem.Price}</Text>
+                          <Text style={styles.foodName}>{item.FoodName}</Text>
+                          <Text style={styles.foodPrice}>${item.Price}</Text>
                         </View>
                       </TouchableOpacity>
-                    ))
-                  }
+                    )}
+                    keyExtractor={item => item.FoodItemID}
+                    numColumns={2}
+                    scrollEnabled={false}
+                    contentContainerStyle={styles.foodListContainer}
+                    columnWrapperStyle={styles.row}
+                  />
                 </View>
-              </View>
             </View>
           </ScrollView>
         )
@@ -173,7 +176,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     paddingHorizontal: 20,
-    marginBottom: 20
+    marginBottom: 10
   },
   restaurantName: {
     fontSize: 24,
@@ -182,17 +185,19 @@ const styles = StyleSheet.create({
   secondaryText: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginLeft: 8,
     color: 'black'
   },
   foodItemCardsContainer: {
-    flex: 2,
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   foodItemCard: {
     width: '48%',
-    padding: 10,
+    padding: 5,
     borderColor: 'lightgray',
+    marginHorizontal: 3,
     borderWidth: 1,
     borderRadius: 10,
   },
@@ -240,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 20,
+    bottom: 3,
     paddingHorizontal: 20
   },
   viewCartText: {

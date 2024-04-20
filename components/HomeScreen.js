@@ -217,10 +217,18 @@ const HomeScreen = () => {
               <Text>DashPass</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.tabItem}>
-              <Text>Pickup</Text>
-            </TouchableOpacity>
+  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <Text>Pickup</Text>
+    <Ionicons name="walk-outline" size={18} color="black" style={{ marginLeft: 5 }} />
+  </View>
+</TouchableOpacity>
+
+
             <TouchableOpacity style={[styles.tabItem, mdSelected ? styles.tabItemSlected : null]} onPress={() => setMdSelected(!mdSelected)}>
               <Text style={mdSelected ? styles.tabItemSlected : null}>Mass Delivery</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tabItem}>
+              <Text>Offers</Text>
             </TouchableOpacity>
           </View>
         </View>
