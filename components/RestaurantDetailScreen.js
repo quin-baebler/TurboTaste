@@ -100,29 +100,29 @@ const RestaurantDetailScreen = ({ route }) => {
                 <ChooseLocationTime orderPool={orderPool} />
               </View>
               <View style={styles.sectionContainer}>
-                  <Text style={styles.secondaryText}>Featured Items</Text>
-                  <FlatList
-                    data={foodItems}
-                    renderItem={({ item }) => (
-                      // Render each item
-                      <TouchableOpacity style={styles.foodItemCard}>
-                        <Image source={{ uri: item.Image }} style={styles.foodImage} />
-                        <TouchableOpacity onPress={addItemToCart(item)} style={styles.addFoodButton}>
-                          <Ionicons name="add-outline" size={22} color="black" />
-                        </TouchableOpacity>
-                        <View style={styles.foodInfo}>
-                          <Text style={styles.foodName}>{item.FoodName}</Text>
-                          <Text style={styles.foodPrice}>${item.Price}</Text>
-                        </View>
+                <Text style={styles.secondaryText}>Featured Items</Text>
+                <FlatList
+                  data={foodItems}
+                  renderItem={({ item }) => (
+                    // Render each item
+                    <TouchableOpacity style={styles.foodItemCard}>
+                      <Image source={{ uri: item.Image }} style={styles.foodImage} />
+                      <TouchableOpacity onPress={addItemToCart(item)} style={styles.addFoodButton}>
+                        <Ionicons name="add-outline" size={22} color="black" />
                       </TouchableOpacity>
-                    )}
-                    keyExtractor={item => item.FoodItemID}
-                    numColumns={2}
-                    scrollEnabled={false}
-                    contentContainerStyle={styles.foodListContainer}
-                    columnWrapperStyle={styles.row}
-                  />
-                </View>
+                      <View style={styles.foodInfo}>
+                        <Text style={styles.foodName}>{item.FoodName}</Text>
+                        <Text style={styles.foodPrice}>${item.Price}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={item => item.FoodItemID}
+                  numColumns={2}
+                  scrollEnabled={false}
+                  contentContainerStyle={styles.foodListContainer}
+                  columnWrapperStyle={styles.row}
+                />
+              </View>
             </View>
           </ScrollView>
         )
@@ -198,6 +198,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: 'lightgray',
     marginHorizontal: 3,
+    marginVertical: 3,
     borderWidth: 1,
     borderRadius: 10,
   },

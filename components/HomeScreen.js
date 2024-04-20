@@ -122,6 +122,28 @@ const HomeScreen = () => {
     )
   }
 
+  function renderMarkers() {
+    // get all unique foodLockerIDs and their corresponding info
+    const foodLockers = orderPoolsContextualized.reduce((map, orderPool) => {
+      if (!map[orderPool.FoodLockerID]) {
+        map[orderPool.FoodLockerID] = orderPool.FoodLocker;
+      }
+      return map;
+    }, {});
+
+    return Object.keys(foodLockers).map(foodLockerID => {
+      const foodLocker = foodLockers[foodLockerID];
+      return (
+        <Marker
+          key={foodLockerID}
+          coordinate={{ latitude: foodLocker.Latitude, longitude: foodLocker.Longitude }}
+          title={foodLocker.FoodLockerName}
+          description={foodLocker.Address}
+        />
+      )
+    });
+  }
+
   function MDRestaurants() {
     // create a map for {foodLockerId: [restaurant1, restaurant2, ...]}
     const foodLockerRestaurants = orderPoolsContextualized.reduce((map, orderPool) => {
@@ -142,15 +164,14 @@ const HomeScreen = () => {
       return map;
     }, {});
 
-
     const foodLockerIDs = Object.keys(foodLockerRestaurants);
 
     return (
       <View style={styles.sectionContainer}>
         {
-          foodLockerIDs.map(foodLockerID => {
+          foodLockerIDs.map((foodLockerID, index) => {
             return (
-              <View key={foodLockerID}>
+              <View key={index}>
                 <View style={styles.foodLockerTab}>
                   <Text style={styles.textPrimary}>{foodLockerRestaurants[foodLockerID][0].FoodLockerName}</Text>
                   <TouchableOpacity onPress={() => goToFoodLocker(foodLockerID)}>
@@ -159,6 +180,7 @@ const HomeScreen = () => {
                 </View>
                 <FlatList
                   horizontal
+                  showsHorizontalScrollIndicator={false}
                   data={foodLockerRestaurants[foodLockerID]}
                   renderItem={renderRestaurants}
                   keyExtractor={restaurant => restaurant.RestaurantID}
@@ -217,11 +239,11 @@ const HomeScreen = () => {
               <Text>DashPass</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.tabItem}>
-  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-    <Text>Pickup</Text>
-    <Ionicons name="walk-outline" size={18} color="black" style={{ marginLeft: 5 }} />
-  </View>
-</TouchableOpacity>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text>Pickup</Text>
+                <Ionicons name="walk-outline" size={18} color="black" style={{ marginLeft: 5 }} />
+              </View>
+            </TouchableOpacity>
 
 
             <TouchableOpacity style={[styles.tabItem, mdSelected ? styles.tabItemSlected : null]} onPress={() => setMdSelected(!mdSelected)}>
@@ -250,20 +272,7 @@ const HomeScreen = () => {
                           latitudeDelta: 0.02,
                           longitudeDelta: 0.02,
                         }}>
-
-                        {
-                          orderPoolsContextualized.map((orderPool) => {
-                            const foodLocker = orderPool.FoodLocker;
-                            return (
-                              <Marker
-                                key={orderPool.FoodLockerID}
-                                coordinate={{ latitude: foodLocker.Latitude, longitude: foodLocker.Longitude }}
-                                title={foodLocker.FoodLockerName}
-                                description="Food Locker"
-                              ></Marker>
-                            )
-                          })
-                        }
+                        {renderMarkers()}
                       </MapView>
                     </View>
                     <MDRestaurants />
