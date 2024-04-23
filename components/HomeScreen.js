@@ -271,18 +271,27 @@ const HomeScreen = () => {
                   <>
                     <View style={styles.howItWorksContainer}>
                       <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between' }} onPress={() => setShowModule(!showModule)}>
-                        <Text style={styles.textPrimary}> How it works?</Text>
+                        <Text style={styles.textPrimary}>How it works?</Text>
                         <Ionicons name="chevron-down" size={24} color="black" />
                       </TouchableOpacity>
-                      {
-                        showModule && (
-                          <View style={{ flexDirection: 'column', justifyContent: 'space-around', gap: 5, marginTop: 10 }}>
-                            <Text>1. Select your preferred Food Locker location</Text>
-                            <Text>2. Select your restaurant and food of choice</Text>
-                            <Text>3. Check-out and pick up from your selected Food Locker location via order ID or QR code</Text>
+                      {showModule && (
+                        <View style={{ marginTop: 10 }}>
+                          <View style={styles.stepContainer}>
+                            <Text style={styles.stepNumber}>1.</Text>
+                            <Text style={styles.stepText}>Select your preferred Food Locker location</Text>
                           </View>
-                        )
-                      }
+                          <View style={styles.stepContainer}>
+                            <Text style={styles.stepNumber}>2.</Text>
+                            <Text style={styles.stepText}>Select your restaurant and food of choice</Text>
+                          </View>
+                          <View style={styles.stepContainer}>
+                            <Text style={styles.stepNumber}>3.</Text>
+                            <Text style={styles.stepText}>
+                              Check-out and pick up from your selected Food Locker location via the QR code
+                            </Text>
+                          </View>
+                        </View>
+                      )}
                     </View>
                     <View style={styles.sectionContainer}>
                       <MapView
@@ -430,6 +439,20 @@ const styles = StyleSheet.create({
     borderColor: 'lightgray',
     borderWidth: 1,
     borderRadius: 10,
-    padding: 16
-  }
+    padding: 12,
+  },
+  stepContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 5,
+  },
+  stepNumber: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginRight: 5,
+  },
+  stepText: {
+    flex: 1,
+    fontSize: 16,
+  },
 })
