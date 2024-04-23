@@ -104,14 +104,21 @@ const HomeScreen = () => {
   function goToFoodLocker(foodLockerID) {
     // find all orderPools that has the foodLockerID
     const orderPools = orderPoolsContextualized.filter(orderPool => orderPool.FoodLockerID === foodLockerID);
-
     navigation.navigate('FoodLocker', { orderPools });
+  }
+
+  function goToRestaurant(orderPool) {
+    navigation.navigate('RestaurantDetail', { orderPool });
   }
 
   function renderRestaurants(restaurant) {
     const item = restaurant.item;
+    let orderPool;
+    if (mdSelected && item.OrderPoolID) {
+      orderPool = orderPoolsContextualized.find(orderPool => orderPool.OrderPoolID === item.OrderPoolID);
+    }
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => goToRestaurant(orderPool)}>
         <View style={styles.restaurantCardContainer}>
           <Image source={{ uri: item.Image }} style={styles.restaurantImg} />
         </View>
@@ -153,13 +160,15 @@ const HomeScreen = () => {
         map[orderPool.FoodLockerID].push({
           ...orderPool.Restaurant,
           RestaurantID: orderPool.RestaurantID,
-          FoodLockerName: orderPool.FoodLockerName
+          FoodLockerName: orderPool.FoodLockerName,
+          OrderPoolID: orderPool.OrderPoolID
         });
       } else {
         map[orderPool.FoodLockerID] = [{
           ...orderPool.Restaurant,
           RestaurantID: orderPool.RestaurantID,
-          FoodLockerName: orderPool.FoodLocker.FoodLockerName
+          FoodLockerName: orderPool.FoodLocker.FoodLockerName,
+          OrderPoolID: orderPool.OrderPoolID
         }];
       }
       return map;
@@ -173,12 +182,10 @@ const HomeScreen = () => {
           foodLockerIDs.map((foodLockerID, index) => {
             return (
               <View key={index}>
-                <View style={styles.foodLockerTab}>
+                <TouchableOpacity style={styles.foodLockerTab} onPress={() => goToFoodLocker(foodLockerID)}>
                   <Text style={styles.textPrimary}>{foodLockerRestaurants[foodLockerID][0].FoodLockerName}</Text>
-                  <TouchableOpacity onPress={() => goToFoodLocker(foodLockerID)}>
-                    <Ionicons name="chevron-forward" size={24} color="black" />
-                  </TouchableOpacity>
-                </View>
+                  <Ionicons name="chevron-forward" size={24} color="black" />
+                </TouchableOpacity>
                 <FlatList
                   horizontal
                   showsHorizontalScrollIndicator={false}

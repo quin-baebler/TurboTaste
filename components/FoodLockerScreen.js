@@ -11,7 +11,7 @@ const FoodLockerScreen = ({ route }) => {
   const navigation = useNavigation();
   const { orderPools } = route.params;
 
-  const toRestaurantScreen = (orderPool) => () => {
+  const toRestaurantScreen = (orderPool) => {
     navigation.navigate('RestaurantDetail', { orderPool });
   }
 
@@ -23,7 +23,7 @@ const FoodLockerScreen = ({ route }) => {
   const RenderOrderPools = () => {
     return orderPools.map(orderPool => (
       <View key={orderPool.OrderPoolID} style={styles.restaurantCard} >
-        <TouchableOpacity onPress={toRestaurantScreen(orderPool)}>
+        <TouchableOpacity onPress={() => toRestaurantScreen(orderPool)}>
           <Image source={{ uri: orderPool.Restaurant.Image }} style={styles.restaurantImg} />
           <View style={styles.restaurantInfo}>
             <View style={styles.lineSection}>
@@ -73,27 +73,6 @@ const FoodLockerScreen = ({ route }) => {
       </View>
       <ScrollView>
         <RenderOrderPools />
-        {/* {foodLockerRestaurants.map((restaurant, index) => (
-          <View key={index} style={styles.restaurantCard} >
-            <TouchableOpacity onPress={toRestaurantScreen(restaurant.name)}>
-              <Image source={{ uri: restaurant.Image }} style={styles.restaurantImg} />
-              <View style={styles.restaurantInfo}>
-                <View style={styles.lineSection}>
-                  <Text style={styles.restaurantName}>{restaurant.RestaurantName}</Text>
-                  <Text style={styles.orderNumber}>{restaurant.orders}</Text>
-                </View>
-                <View style={styles.lineSection}>
-                  <Text style={styles.secondaryText}>{restaurant.Cuisine} • {restaurant.Price}</Text>
-                  <Text style={styles.secondaryText}>Order By {restaurant.orderTime}</Text>
-                </View>
-                <View style={styles.lineSection}>
-                  <Text style={styles.secondaryText}>{restaurant.Rating} <FontAwesome name="star" size={16} color="gold" /> {restaurant.Reviews}</Text>
-                  <Text style={styles.secondaryText}>Deliver by {restaurant.deliveryTime}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-        ))} */}
       </ScrollView>
     </View>
   );
