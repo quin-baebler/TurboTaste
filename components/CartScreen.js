@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 10,
+    bottom: 8,
     paddingHorizontal: 20
   },
   continueButtonText: {

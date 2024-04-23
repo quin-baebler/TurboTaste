@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 10,
+    bottom: 5,
     paddingHorizontal: 20
   },
   viewCartText: {

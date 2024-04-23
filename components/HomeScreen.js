@@ -272,7 +272,7 @@ const HomeScreen = () => {
                     <View style={styles.howItWorksContainer}>
                       <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between' }} onPress={() => setShowModule(!showModule)}>
                         <Text style={styles.textPrimary}>How it works?</Text>
-                        <Ionicons name="chevron-down" size={24} color="black" />
+                        <Ionicons name="chevron-down" size={22} color="black" />
                       </TouchableOpacity>
                       {showModule && (
                         <View style={{ marginTop: 10 }}>
@@ -454,5 +454,6 @@ const styles = StyleSheet.create({
   stepText: {
     flex: 1,
     fontSize: 16,
+    lineHeight : 23,
   },
 })
