@@ -92,9 +92,12 @@ const RestaurantDetailScreen = ({ route }) => {
               </View>
             </View>
             <View style={{ top: -Dimensions.get('window').height / 20 }}>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.restaurantName}>{restaurant.RestaurantName}</Text>
-                <Text>{restaurant.Rating} <Ionicons name="star" size={16} color="gold" /> ({restaurant.Reviews}) • {restaurant.Cuisine}</Text>
+              <View style={[styles.sectionContainer, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                <View>
+                  <Text style={styles.restaurantName}>{restaurant.RestaurantName}</Text>
+                  <Text>{restaurant.Rating} <Ionicons name="star" size={16} color="gold" /> ({restaurant.Reviews}) • {restaurant.Cuisine}</Text>
+                </View>
+                <Text style={styles.orderNumber}>{orderPool.OrderID.length} {orderPool.OrderID.length > 1 ? 'Orders' : 'Order'}</Text>
               </View>
               <View style={styles.sectionContainer}>
                 <ChooseLocationTime orderPool={orderPool} />
@@ -246,12 +249,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 3,
+    bottom: 10,
     paddingHorizontal: 20
   },
   viewCartText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold'
+  },
+  orderNumber: {
+    fontSize: 18,
+    color: 'red',
     fontWeight: 'bold'
   }
 });

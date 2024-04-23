@@ -61,17 +61,18 @@ const CheckoutScreen = ({ route }) => {
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude: 47.655548,
-              longitude: -122.303200,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
+              latitude: orderPool.FoodLocker.Latitude,
+              longitude: orderPool.FoodLocker.Longitude,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
             }}>
             <Marker
               coordinate={{
-                latitude: 47.655548,
-                longitude: -122.303200,
+                latitude: orderPool.FoodLocker.Latitude,
+                longitude: orderPool.FoodLocker.Longitude,
               }}
-              title="Suzzallo Food Locker"
+              title={orderPool.FoodLocker.FoodLockerName}
+              description='Food Locker'
             />
           </MapView>
         </View>
@@ -136,7 +137,7 @@ const CheckoutScreen = ({ route }) => {
       <Pressable style={styles.button} onPress={placeOrder}>
         {
           loading ? (
-            <ActivityIndicator size="small" color="white"/>
+            <ActivityIndicator size="small" color="white" />
           ) : (
             <Text style={styles.buttonText}>Place Order</Text>
           )
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    bottom: 20,
+    bottom: 10,
     marginTop: 30,
   },
   buttonText: {

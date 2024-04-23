@@ -16,6 +16,7 @@ const HomeScreen = () => {
   const [orderPools, setOrderPools] = useState([]);
   const [orderPoolsContextualized, setOrderPoolsContextualized] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
+  const [showModule, setShowModule] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -240,12 +241,10 @@ const HomeScreen = () => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.tabItem}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name='walk' size={18} color="black" style={{ marginRight: 5 }} />
                 <Text>Pickup</Text>
-                <Ionicons name="walk-outline" size={18} color="black" style={{ marginLeft: 5 }} />
               </View>
             </TouchableOpacity>
-
-
             <TouchableOpacity style={[styles.tabItem, mdSelected ? styles.tabItemSlected : null]} onPress={() => setMdSelected(!mdSelected)}>
               <Text style={mdSelected ? styles.tabItemSlected : null}>Mass Delivery</Text>
             </TouchableOpacity>
@@ -263,6 +262,21 @@ const HomeScreen = () => {
                   <ActivityIndicator size="large" color="black" style={styles.loading} />
                 ) : (
                   <>
+                    <View style={styles.howItWorksContainer}>
+                      <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between' }} onPress={() => setShowModule(!showModule)}>
+                        <Text style={styles.textPrimary}> How it works?</Text>
+                        <Ionicons name="chevron-down" size={24} color="black" />
+                      </TouchableOpacity>
+                      {
+                        showModule && (
+                          <View style={{ flexDirection: 'column', justifyContent: 'space-around', gap: 5, marginTop: 10 }}>
+                            <Text>1. Select your preferred Food Locker location</Text>
+                            <Text>2. Select your restaurant and food of choice</Text>
+                            <Text>3. Check-out and pick up from your selected Food Locker location via order ID or QR code</Text>
+                          </View>
+                        )
+                      }
+                    </View>
                     <View style={styles.sectionContainer}>
                       <MapView
                         style={styles.map}
@@ -402,5 +416,13 @@ const styles = StyleSheet.create({
   },
   loading: {
     marginTop: 20
+  },
+  howItWorksContainer: {
+    marginHorizontal: 20,
+    marginBottom: 10,
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 16
   }
 })
