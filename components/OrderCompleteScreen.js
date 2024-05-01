@@ -24,16 +24,15 @@ const OrderCompleteScreen = ({ route }) => {
     <SafeAreaView style={styles.container}>
       <BackButton />
       <Text style={styles.textPrimary}>Order Complete</Text>
-      <Text style={styles.textBody}>Thank you for your order! Your Order has reached <Text style={{ fontWeight: 'bold' }}>{orderPool.FoodLocker.FoodLockerName}</Text> Food Locker at <Text style={{ fontWeight: 'bold' }}>{parseTime(orderPool.DeliveryTime)}</Text>. Please enter the order ID texted to you, or scan the QR code to unlock your order</Text>
+      <Text style={styles.textBody}>Thank you for your order! Your Order has reached <Text style={{ fontWeight: 'bold' }}>{orderPool.FoodLocker.FoodLockerName}</Text> Food Locker at <Text style={{ fontWeight: 'bold' }}>{parseTime(orderPool.DeliveryTime)}</Text>. Please scan the QR code to unlock your order</Text>
       <Text style={styles.textSecondary}>Scan Me</Text>
       <View style={styles.centeredContainer}>
-      <QRCode
-        value="https://example.com" // Replace this with your desired content
-        size={245}      
-        color='black'
-        backgroundColor='white'
-      />
-    </View>
+        <QRCode
+          size={245}
+          color='black'
+          backgroundColor='white'
+        />
+      </View>
       <TouchableOpacity style={styles.button} onPress={finishOrder}>
         <Text style={styles.buttonText}>Finish Order</Text>
       </TouchableOpacity>
@@ -65,6 +64,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 20,
     marginTop: 90,
+  },
+  centeredContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    borderRadius: 10,
+    borderColor: 'lightgrey',
+    borderWidth: 1,
+    padding: 50,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+
   },
   button: {
     marginHorizontal: 20,

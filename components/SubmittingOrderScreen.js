@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { addDoc, arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
-const SubmittingOrderScreen = () => {
+const SubmittingOrderScreen = ({ route }) => {
+  const currentUser = FIREBASE_AUTH.currentUser;
+  const { cartItems, orderPool, calculateTotalWithouTip, calculateOriginalTotal } = route.params;
   const [orderStatus, setOrderStatus] = useState({
     submitting: true,
     text: 'Submitting Order ...',
@@ -25,52 +29,81 @@ const SubmittingOrderScreen = () => {
     );
   };
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setOrderStatus({
-        submitting: false,
-        text: 'Order Submitted',
-        icon: 'check-circle',
-      });
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    submitOrder()
+      .then(() => {
+        setOrderStatus({
+          submitting: false,
+          text: 'Order Submitted',
+          icon: 'check-circle',
+        });
+      })
   }, []);
+
+  async function submitOrder() {
+    const FoodItemIDs = cartItems.map(item => {
+      return { FoodItemID: item.FoodItemID, Quantity: item.Quantity }
+    });
+
+    try {
+      const newOrder = {
+        FoodItemIDs: FoodItemIDs,
+        OrderTime: new Date(),
+        RestaurantID: orderPool.RestaurantID,
+        TotalAmount: calculateTotalWithouTip.toFixed(2),
+        UserID: currentUser.uid
+      }
+      const newOrderResponse = await addDoc(collection(FIREBASE_DB, 'Orders'), newOrder);
+      const newOrderID = newOrderResponse.id;
+
+      if (newOrderID) {
+        const orderPoolRef = doc(FIREBASE_DB, 'OrderPools', orderPool.OrderPoolID);
+        await updateDoc(orderPoolRef, {
+          OrderID: arrayUnion(newOrderID)
+        })
+      }
+    } catch (error) {
+      // alert the user
+      console.error('Error adding document: ', error);
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
       <View style={[styles.savedContainer, orderStatus.submitting ? styles.submittingBackground : styles.submittedBackground]}>
-        <Text style={styles.savedAmount}>$8.10</Text>
+        <Text style={styles.savedAmount}>${(calculateOriginalTotal - calculateTotalWithouTip).toFixed(2)}</Text>
         <Text style={styles.savedText}>SAVED</Text>
       </View>
-  
+
       <View style={styles.detailsContainer}>
         {renderOrderStatus()}
         <View style={styles.addressContainer}>
           <Text style={styles.addressTitle}>Address</Text>
-          <Text style={styles.address}>4000 15th Ave NE, Seattle, WA 98195</Text>
-          <Text style={styles.addressDetail}>Suzzallo Library</Text>
+          <Text style={styles.address}>{orderPool.FoodLocker.FoodLockerName}</Text>
         </View>
         <View style={styles.orderContainer}>
-          <Text style={styles.orderTitle}>McDonald’s</Text>
-          <Text style={styles.orderDetail}>6x Big Mac</Text>
-          <Text style={styles.orderDetail}>3x Chicken Sandwich</Text>
-          <Text style={styles.orderDetail}>4x Filet-O-Fish...</Text>
+          <Text style={styles.orderTitle}>{orderPool.Restaurant.RestaurantName}</Text>
+          {
+            cartItems.map((item, index) => {
+              return (
+                <Text key={index} style={styles.orderDetail}>{item.FoodName} x {item.Quantity}</Text>)
+            })
+          }
         </View>
-        <TouchableOpacity style={styles.viewOrderButton} onPress={() => navigation.navigate('Orders')}>
+        <TouchableOpacity style={styles.viewOrderButton} onPress={() => navigation.navigate('Orders', { orderPool })}>
           <Text style={styles.viewOrderButtonText}>View Order</Text>
         </TouchableOpacity>
       </View>
 
       {/* Cancel Button */}
       <TouchableOpacity
-      style={styles.cancelButton}
-      onPress={() => {
-      }}
-    >
-      <Text style={styles.cancelButtonText}>Cancel Order</Text>
-    </TouchableOpacity>
-    <View style={{ height: 20 }} />
-  </ScrollView>
+        style={styles.cancelButton}
+        onPress={() => {
+        }}
+      >
+        <Text style={styles.cancelButtonText}>Cancel Order</Text>
+      </TouchableOpacity>
+      <View style={{ height: 20 }} />
+    </ScrollView>
   );
 };
 
@@ -180,13 +213,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cancelButton: {
-    backgroundColor: 'lightcyan', // Red background for cancel button
-    borderRadius: 25,
+    backgroundColor: 'lightcyan',
     padding: 15,
+    marginHorizontal: 20,
     width: '90%',
-    alignSelf: 'center',
-    marginTop: 40, // Adjust top margin as needed
-    marginBottom: 40, // Reduce bottom margin to move button up
+    height: 50,
+    borderRadius: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    bottom: 10,
+    marginTop: 30,
   },
   cancelButtonText: {
     textAlign: 'center',

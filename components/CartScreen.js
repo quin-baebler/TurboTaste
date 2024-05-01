@@ -12,14 +12,6 @@ const CartScreen = ({ route }) => {
     { id: '3', name: 'McFlurry', price: 3.0, image: require('../assets/mcflurry.jpg') },
   ]);
 
-  const onAddItem = (item) => {
-    props.handleAddItem(item);
-  };
-
-  const onRemoveItem = (item) => {
-    props.handleRemoveItem(item);
-  };
-
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem} key={item.FoodName}>
       <Image source={{ uri: item.Image }} style={styles.itemImage} />
@@ -30,7 +22,6 @@ const CartScreen = ({ route }) => {
       <View style={styles.itemQuantity}>
         <TouchableOpacity
           style={[styles.roundButton, item.quantity === 1 && styles.roundButtonDisabled]}
-          onPress={() => onRemoveItem(item)}
           disabled={item.Quantity <= 1}
         >
           <Ionicons name="remove" size={20} color="black" />
@@ -38,7 +29,6 @@ const CartScreen = ({ route }) => {
         <Text style={styles.quantityText}>{item.Quantity}</Text>
         <TouchableOpacity
           style={styles.roundButton}
-          onPress={() => onAddItem(item)}
         >
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
@@ -59,11 +49,15 @@ const CartScreen = ({ route }) => {
   const calculateSummary = () => {
     const subtotal = cartItems.reduce((acc, item) => acc + item.Price * item.Quantity, 0);
     const deliveryFee = 0;
-    const fees = subtotal * 0.05;
+    const fees = Math.min(subtotal * 0.05, 2.00);
     const estimatedTax = subtotal * 0.10;
     const total = subtotal + deliveryFee + fees + estimatedTax;
 
-    return { subtotal, deliveryFee, fees, estimatedTax, total };
+    const originalDeliveryFee = 3.99;
+    const originalFees = Math.max(subtotal * 0.15, 3.00);
+    const originalTotal = subtotal + originalDeliveryFee + originalFees + estimatedTax;
+
+    return { subtotal, deliveryFee, fees, estimatedTax, total, originalDeliveryFee, originalFees, originalTotal };
   }
 
   const goToCheckout = () => {
@@ -73,7 +67,10 @@ const CartScreen = ({ route }) => {
         deliveryFee: calculateSummary().deliveryFee.toFixed(2),
         fees: calculateSummary().fees.toFixed(2),
         estimatedTax: calculateSummary().estimatedTax.toFixed(2),
-        total: calculateSummary().total.toFixed(2)
+        total: calculateSummary().total.toFixed(2),
+        originalDeliveryFee: calculateSummary().originalDeliveryFee.toFixed(2),
+        originalFees: calculateSummary().originalFees.toFixed(2),
+        originalTotal: calculateSummary().originalTotal.toFixed(2)
       },
       cartItems: cartItems,
       orderPool: orderPool
@@ -113,14 +110,14 @@ const CartScreen = ({ route }) => {
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Delivery Fee</Text>
             <View style={styles.deliveryFeeContainer}>
-              <Text style={styles.originalFee}>$2.50 </Text>
+              <Text style={styles.originalFee}>${calculateSummary().originalDeliveryFee.toFixed(2)} </Text>
               <Text style={styles.summaryValue}>${calculateSummary().deliveryFee.toFixed(2)}</Text>
             </View>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Fees & Estimated Tax</Text>
             <View style={styles.deliveryFeeContainer}>
-              <Text style={styles.originalFee}>$4.00 </Text>
+              <Text style={styles.originalFee}>${(calculateSummary().originalFees + calculateSummary().estimatedTax).toFixed(2)} </Text>
               <Text style={styles.summaryValue}>${(calculateSummary().fees + calculateSummary().estimatedTax).toFixed(2)}</Text>
             </View>
           </View>

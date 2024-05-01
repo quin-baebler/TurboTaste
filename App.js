@@ -15,6 +15,8 @@ import CheckoutScreen from './components/CheckoutScreen';
 import BottomNavBar from './components/BottomNavBar';
 import HomeScreen from './components/HomeScreen';
 import OrderCompleteScreen from './components/OrderCompleteScreen';
+import SubmittingOrderScreen from './components/SubmittingOrderScreen';
+import OrdersScreen from './components/OrdersScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +53,8 @@ function InsideNav() {
           )
         }}
       />
+      <InsideStack.Screen name="SubmittingOrder" component={SubmittingOrderScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="OrderComplete" component={OrderCompleteScreen} options={{ headerShown: false }} />
     </InsideStack.Navigator>
   );

@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 import { FIREBASE_DB } from '../firebaseConfig';
 
@@ -18,6 +19,7 @@ const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [showModule, setShowModule] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(true);
 
   useEffect(() => {
     if (mdSelected) {
@@ -118,7 +120,7 @@ const HomeScreen = () => {
       orderPool = orderPoolsContextualized.find(orderPool => orderPool.OrderPoolID === item.OrderPoolID);
     }
     return (
-      <TouchableOpacity onPress={() => goToRestaurant(orderPool)}>
+      <TouchableOpacity onPress={mdSelected ? () => goToRestaurant(orderPool) : null}>
         <View style={styles.restaurantCardContainer}>
           <Image source={{ uri: item.Image }} style={styles.restaurantImg} />
         </View>
@@ -252,9 +254,21 @@ const HomeScreen = () => {
                 <Text>Pickup</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.tabItem, mdSelected ? styles.tabItemSlected : null]} onPress={() => setMdSelected(!mdSelected)}>
-              <Text style={mdSelected ? styles.tabItemSlected : null}>Mass Delivery</Text>
-            </TouchableOpacity>
+            <Tooltip
+              isVisible={tooltipVisible}
+              content={
+                <View>
+                  <Text style={styles.tooltipText}>Check out our new Mass Delivery feature!</Text>
+                  <Text style={styles.tooltipText}>It saves your MONEY!!</Text>
+                </View>
+              }
+              placement='top'
+              onClose={() => setTooltipVisible(false)}
+              contentStyle={styles.tooltipContentStyle}>
+              <TouchableOpacity style={[styles.tabItem, mdSelected ? styles.tabItemSlected : null]} onPress={() => setMdSelected(!mdSelected)}>
+                <Text style={mdSelected ? styles.tabItemSlected : null}>Mass Delivery</Text>
+              </TouchableOpacity>
+            </Tooltip>
             <TouchableOpacity style={styles.tabItem}>
               <Text>Offers</Text>
             </TouchableOpacity>
@@ -454,6 +468,24 @@ const styles = StyleSheet.create({
   stepText: {
     flex: 1,
     fontSize: 16,
-    lineHeight : 23,
+    lineHeight: 23,
   },
+  tooltipText: {
+    color: 'white',
+    flexWrap: 'wrap',
+    fontSize: 20,
+    padding: 5,
+    fontWeight: 'bold'
+  },
+  tooltipContentStyle: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 10,
+    borderColor: 'red',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
+    maxWidth: 300,
+    flexShrink: 1
+  }
 })

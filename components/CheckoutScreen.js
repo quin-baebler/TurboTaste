@@ -3,55 +3,22 @@ import { View, StyleSheet, ScrollView, Dimensions, Text, TouchableOpacity, Press
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import ChooseLocationTime from "./ChooseLocationTime";
-import { addDoc, arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
 const CheckoutScreen = ({ route }) => {
   const navigation = useNavigation();
 
-  const { currentUser } = FIREBASE_AUTH;
   const { summary, cartItems, orderPool } = route.params;
 
   const [selectedTip, setSelectedTip] = useState(0);
-  const tips = [3, 3.5, 4, 5];
+  const tips = [1.5, 3, 3.5, 5];
 
-  const [loading, setLoading] = useState(false);
-
-  const calculateTotal = parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip];
+  const calculateTotal = parseFloat(summary.total) + tips[selectedTip];
+  const calculateOriginalTotal = parseFloat(summary.originalTotal);
+  const calculateTotalWithouTip = parseFloat(summary.total);
 
   const placeOrder = async () => {
-    setLoading(true);
-
-    const FoodItemIDs = cartItems.map(item => {
-      return { FoodItemID: item.FoodItemID, Quantity: item.Quantity }
-    });
-
-    try {
-      const newOrder = {
-        FoodItemIDs: FoodItemIDs,
-        OrderTime: new Date(),
-        RestaurantID: orderPool.RestaurantID,
-        TotalAmount: parseFloat(summary.subtotal) + parseFloat(summary.deliveryFee) + parseFloat(summary.fees) + parseFloat(summary.estimatedTax) + tips[selectedTip],
-        UserID: currentUser.uid
-      }
-      const newOrderResponse = await addDoc(collection(FIREBASE_DB, 'Orders'), newOrder);
-      const newOrderID = newOrderResponse.id;
-
-      if (newOrderID) {
-        const orderPoolRef = doc(FIREBASE_DB, 'OrderPools', orderPool.OrderPoolID);
-        await updateDoc(orderPoolRef, {
-          OrderID: arrayUnion(newOrderID)
-        })
-      }
-    } catch (error) {
-      // alert the user
-      console.error('Error adding document: ', error);
-    } finally {
-      // navigate to order confirmation screen
-      setLoading(false);
-      navigation.navigate('OrderComplete', { orderPool });
-    }
+    navigation.navigate('SubmittingOrder', { orderPool, cartItems, calculateTotalWithouTip, calculateOriginalTotal });
   }
 
   return (
@@ -135,13 +102,7 @@ const CheckoutScreen = ({ route }) => {
         </View>
       </ScrollView>
       <Pressable style={styles.button} onPress={placeOrder}>
-        {
-          loading ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <Text style={styles.buttonText}>Place Order</Text>
-          )
-        }
+        <Text style={styles.buttonText}>Place Order</Text>
       </Pressable>
     </View>
   )

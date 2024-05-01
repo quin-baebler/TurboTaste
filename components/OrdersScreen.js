@@ -2,21 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const OrdersScreen = ({ navigation }) => {
-  const [orderStatus, setOrderStatus] = useState('Heading to Suzzallo Hub');
+const OrdersScreen = ({ navigation, route }) => {
+  const { orderPool } = route.params;
+
+  const [orderStatus, setOrderStatus] = useState(`Heading to ${orderPool.FoodLocker.FoodLockerName} Food Locker`);
   const [progress, setProgress] = useState(0.5); // Progress of the order, 0.5 for half, 1 for completed
   const [orderProgress, setOrderProgress] = useState('inProgress');
-  
+
   useEffect(() => {
     // Mock order status update after 2 seconds
     const timer = setTimeout(() => {
-      setOrderStatus('Arrived at Suzzallo Hub');
+      setOrderStatus(`Arrived at ${orderPool.FoodLocker.FoodLockerName} Food Locker`);
       setProgress(1); // Set progress to 1 indicating completion
       setOrderProgress('completed');
-    }, 2000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -61,7 +62,7 @@ const OrdersScreen = ({ navigation }) => {
       color: 'black', // Color of the icons
     },
   });
-  
+
   // Dummy data for completed orders
   const completedOrders = [
     {
@@ -82,23 +83,9 @@ const OrdersScreen = ({ navigation }) => {
     },
   ];
 
-  // Active order details
-  const activeOrder = {
-    id: '1',
-    restaurant: "McDonald's",
-    status: 'Heading to Suzzallo Hub',
-    eta: 'Arrives in 35 - 45 min',
-    mapRegion: {
-      latitude: 47.6062,
-      longitude: -122.3321,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    },
-  };
-
   const renderCompletedOrder = (order) => {
     let imageSource = order.id === '1' ? require('../assets/thai.png') : require('../assets/rt.png');
-  
+
     return (
       <View key={order.id} style={styles.completedOrderContainer}>
         <View style={styles.orderHeader}>
@@ -118,140 +105,93 @@ const OrdersScreen = ({ navigation }) => {
       </View>
     );
   };
-  
 
-  const renderProgressBar = () => {
-    return (
-      <View style={styles.progressBarContainer}>
-        <View style={styles.progressBarLine} />
-        <FontAwesome name="industry" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-        <FontAwesome name="building" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-        <FontAwesome name="car" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-        <FontAwesome name="lock" size={26} color={orderArrived ? 'black' : 'grey'} style={styles.progressBarIcon} />
-      </View>
-    );
-  };
-
-
-  // MapView marker coordinates for the active order
-  const markerCoordinate = {
-    latitude: 47.6062,
-    longitude: -122.3321,
-  };
 
   const handleViewOrderDetails = () => {
-    navigation.navigate('OrderDetails'); // Use the correct screen name for order details
+    navigation.navigate('OrderComplete', { orderPool }); // Use the correct screen name for order details
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-<ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: 20 }}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: 20 }}>
         <Text style={styles.header}>Orders</Text>
         <View style={styles.shadowBox}>
-        {/* Active Order */}
-        <MapView
+          <MapView
             style={styles.map}
             initialRegion={{
-              latitude: 47.655548,
-              longitude: -122.303200,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
+              latitude: orderPool.FoodLocker.Latitude,
+              longitude: orderPool.FoodLocker.Longitude,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
             }}>
             <Marker
               coordinate={{
-                latitude: 47.655548,
-                longitude: -122.303200,
+                latitude: orderPool.FoodLocker.Latitude,
+                longitude: orderPool.FoodLocker.Longitude,
               }}
-              title="Suzzallo Food Locker"
+              title={orderPool.FoodLocker.FoodLockerName}
+              description='Food Locker'
             />
           </MapView>
-        <View style={styles.activeOrderContainer}>
-          <Text style={styles.restaurantName}>McDonald's</Text>
-          <Text style={styles.orderStatus}>
-            {orderStatus}
-          </Text>
-          <Text style={styles.orderEta}>
-            {orderProgress === 'inProgress' ? 'Arrives in 35 - 45 min' : 'Your order has arrived!'}
-          </Text>
-          {/* Progress Bar */}
-          <View style={progressBarStyles.container}>
-  <View style={progressBarStyles.line} />
-  {progress > 0 && <View style={progressBarStyles.completedLine} />}
-  <View style={progressBarStyles.iconContainer}>
-    <FontAwesome name="industry" size={18} color="black" />
-  </View>
-  <View style={progressBarStyles.iconContainer}>
-    <FontAwesome name="building" size={18} color="black" />
-  </View>
-  <View style={progressBarStyles.iconContainer}>
-    <FontAwesome name="car" size={18} color="black" />
-  </View>
-  <View style={progressBarStyles.iconContainer}>
-    <FontAwesome name="lock" size={18} color="black" />
-  </View>
-</View>
+          <View style={styles.activeOrderContainer}>
+            <Text style={styles.restaurantName}>{orderPool.Restaurant.RestaurantName}</Text>
+            <Text style={styles.orderStatus}>
+              {orderStatus}
+            </Text>
+            <Text style={styles.orderEta}>
+              {orderProgress === 'inProgress' ? 'Arrives in 35 - 45 min' : 'Your order has arrived!'}
+            </Text>
+            <View style={progressBarStyles.container}>
+              <View style={progressBarStyles.line} />
+              {progress > 0 && <View style={progressBarStyles.completedLine} />}
+              <View style={progressBarStyles.iconContainer}>
+                <FontAwesome name="industry" size={18} color="black" />
+              </View>
+              <View style={progressBarStyles.iconContainer}>
+                <FontAwesome name="building" size={18} color="black" />
+              </View>
+              <View style={progressBarStyles.iconContainer}>
+                <FontAwesome name="car" size={18} color="black" />
+              </View>
+              <View style={progressBarStyles.iconContainer}>
+                <FontAwesome name="lock" size={18} color="black" />
+              </View>
+            </View>
 
 
-      <TouchableOpacity style={styles.orderDetailsButton} onPress={handleViewOrderDetails}>
-        <Text style={styles.orderDetailsButtonText} numberOfLines={1}>Order Details</Text>
-      </TouchableOpacity>
+            <TouchableOpacity style={styles.orderDetailsButton} onPress={handleViewOrderDetails}>
+              <Text style={styles.orderDetailsButtonText} numberOfLines={1}>Order Details</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-        {/* Completed Orders */}
         <Text style={styles.completedOrdersHeader}>Completed</Text>
         {completedOrders.map(renderCompletedOrder)}
-        </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View style={styles.bottomNavigationBar}>
-        {/* The same navigation bar as in McDonaldsDetailScreen */}
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.navItem}>
-          <FontAwesome name="home" size={24} color="gray" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Grocery')} style={styles.navItem}>
-          <FontAwesome name="shopping-basket" size={24} color="gray" />
-          <Text style={styles.navText}>Grocery</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Retail')} style={styles.navItem}>
-          <FontAwesome name="tag" size={24} color="gray" />
-          <Text style={styles.navText}>Retail</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Search')} style={styles.navItem}>
-          <FontAwesome name="search" size={24} color="gray" />
-          <Text style={styles.navText}>Search</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Orders')} style={styles.navItem}>
-          <FontAwesome name="file-text-o" size={24} color="gray" />
-          <Text style={styles.navText}>Orders</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
-
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 15,
+    backgroundColor: '#fff'
   },
   scrollView: {
     flex: 1,
-    paddingBottom: 150, // Adjust this value as needed, it should be at least the height of the bottom navigation bar
+    paddingBottom: 150,
   },
   header: {
     fontSize: 32,
     fontWeight: 'bold',
-    padding: 16,
+    marginHorizontal: 20,
+    marginTop: 20
   },
   orderContainer: {
     marginBottom: 16,
   },
   map: {
-    height: 150,
-    borderRadius: 8,
+    height: 200,
+    borderRadius: 10
   },
   orderDetails: {
     padding: 16,
@@ -304,7 +244,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eeeeee', // Light grey color for the separator line
   },
-  
   orderActionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -320,33 +259,6 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 14,
     fontWeight: '600',
-  },
-  navBarContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#eeeeee',
-    paddingVertical: 12,
-  },
-  bottomNavigationBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingVertical: 10,
-    position: 'absolute', // Make navigation bar stick to the bottom
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  navItem: {
-    alignItems: 'center', // Center the icons and text
-  },
-  navText: {
-    fontSize: 10, // Smaller font size for the text
-    color: 'gray',
   },
   progressBarContainer: {
     flexDirection: 'row',
@@ -366,7 +278,6 @@ const styles = StyleSheet.create({
   progressBarIcon: {
     marginHorizontal: '8%',
   },
-
   completedOrderContainer: {
     padding: 16,
     borderTopWidth: 1,
@@ -428,7 +339,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   activeOrderContainer: {
-    paddingTop: 10,
+    padding: 16
   },
   shadowBox: {
     shadowColor: '#000',
@@ -440,10 +351,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    paddingTop: 0,
-    marginBottom: 16,
+    borderRadius: 10,
+    margin: 20
   },
   orderHeader: {
     flexDirection: 'row',
