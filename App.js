@@ -15,6 +15,7 @@ import CheckoutScreen from './components/CheckoutScreen';
 import BottomNavBar from './components/BottomNavBar';
 import HomeScreen from './components/HomeScreen';
 import OrderCompleteScreen from './components/OrderCompleteScreen';
+import DasherScreen from './components/Dasher';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,7 @@ function InsideNav() {
   const navigation = useNavigation();
   return (
     <InsideStack.Navigator>
-      <InsideStack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="Home" component={DasherScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="FoodLocker" component={FoodLockerScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="RestaurantDetail" component={RestaurantDetailScreen} options={{ headerShown: false }} />
       <InsideStack.Screen
@@ -66,13 +67,13 @@ function InsideLayout() {
 }
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("hi");
 
-  useEffect(() => {
+  /*useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
     })
-  }, []);
+  }, []); */
 
   return (
     <NavigationContainer>
