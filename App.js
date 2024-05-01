@@ -15,6 +15,7 @@ import CheckoutScreen from './components/CheckoutScreen';
 import BottomNavBar from './components/BottomNavBar';
 import HomeScreen from './components/HomeScreen';
 import OrderCompleteScreen from './components/OrderCompleteScreen';
+import DasherScreen from './components/Dasher';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,13 +67,13 @@ function InsideLayout() {
 }
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
     })
-  }, []);
+  }, []); 
 
   return (
     <NavigationContainer>
