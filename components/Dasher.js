@@ -6,8 +6,8 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 export default function DasherScreen() {
     const [countdown, setCountdown] = useState(60);
     const initialRegion = {
-        latitude: 47.655548,
-        longitude: -122.303200,
+        latitude: 47.661891454856125,
+        longitude: -122.31415648924836,
         latitudeDelta: 0.02,
         longitudeDelta: 0.02,
     };
@@ -89,7 +89,10 @@ export default function DasherScreen() {
                     <View style={styles.iconContainer}>
                         <MaterialCommunityIcons name="briefcase" size={24} color="red" />
                         <View style={styles.textContainer}>
-                            <Text style={styles.pickupText}>Restaurant pickup</Text>
+                        <Text style={styles.pickupText}>
+                            Restaurant Pickup - 
+                            <Text style={{fontWeight: 'bold'}}> Mass Delivery</Text>
+                            </Text>
                             <Text style={styles.restaurantText}>Chipotle</Text>
                         </View>
                     </View>
@@ -182,18 +185,18 @@ const styles = StyleSheet.create({
     },
     pickupText: {
         color: 'red',
-        fontSize: 12,
+        fontSize: 16,
         marginLeft: 5 // Add margin between the icon and text
     },
     restaurantText: {
         color: 'black',
-        fontSize: 13,
-        fontWeight: 'bold',
+        fontSize: 16,
+        //fontWeight: 'bold',
         marginLeft: 5 // Add margin between the text and restaurant name
     },
     dropoffText: {
         color: 'black',
-        fontSize: 12,
+        fontSize: 16,
         marginLeft: 5 // Add margin between the icon and text
     },
     dividerVertical: {
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10 // Add margin between the icons
     },
     acceptButton: {
-        marginHorizontal: 20,
+        marginHorizontal: 31.5,
         width: '90%',
         height: 50,
         borderRadius: 200,
@@ -214,6 +217,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 8,
         paddingHorizontal: 20,
+        marginBottom: 10,
     },
     
     acceptButtonText: {
