@@ -74,9 +74,11 @@ const App = () => {
   const [user, setUser] = useState("");
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      setUser(user);
-    })
+    setTimeout(() => {
+      onAuthStateChanged(FIREBASE_AUTH, (user) => {
+        setUser(user);
+      })
+    }, 10000);
   }, []);
 
   return (
