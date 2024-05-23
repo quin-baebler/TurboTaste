@@ -1,9 +1,13 @@
-# TurboTaste
+<div style="display: flex; align-items: center;">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66z9yEELDfxi04VSbX9MCe6si46WvjiPjMG3NVX41nQ&s" alt="TurboTaste Logo" style="margin-right: 10px;">
+  <h1>TurboTaste</h1>
+</div>
 
 This project for our senior captstone works with DoorDash to implement a new mass delivery feature to be integrated with the existing IOS/Android apps. In order to do this, we created a full-stack, fully functioning independently, version of the DoorDash app using React Native and Expo Go for testing. The backend implementation of the mass delivery feature includes MongoDB for storing users, orders, and order batches (see documentation) and is created using JavaScript. This final project was presented at the iSchool Capstone Gala in 2024.
-Official Capstone Page
+
+### Official Capstone Page
 https://ischool.uw.edu/capstone/projects/2024/mass-delivery-integration-doordash
-Handoff/Documentation Document
+### Handoff/Documentation Document
 https://docs.google.com/document/d/1MdrxEGwrKzIUYdE7On3ao06reNc9SSrCpJK913c5ZJw/edit?usp=sharing
  
 
